@@ -1,1 +1,1 @@
-# test-hbn
+# hBN database
