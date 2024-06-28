@@ -5,7 +5,7 @@ st.set_page_config(page_title="About",layout="wide")
 st.markdown(
     """
     <div class="banner">
-        <img src="https://raw.githubusercontent.com/AshkanZand-TUM/test-hbn/7d6aae582cb97a35b8ba774b8efdc5b48bf4cf41/icon/banner_file_size_3.svg" alt="Banner Image">
+        <img src="https://raw.githubusercontent.com/QCS-Theory/hBN-database/25122f09557a7d320d9172225926082c3d0e7163/icon/banner_file_size_3.svg" alt="Banner Image">
     </div>
     <style>
         .banner {
