@@ -46,7 +46,7 @@ st.set_page_config(page_title="hBN Defects Database", page_icon=":atom_symbol:",
 st.markdown(
     """
     <div class="banner">
-        <img src="https://raw.githubusercontent.com/AshkanZand-TUM/test-hbn/7d6aae582cb97a35b8ba774b8efdc5b48bf4cf41/icon/banner_file_size_3.svg" alt="Banner Image">
+        <img src="https://raw.githubusercontent.com/QCS-Theory/hBN-database/0f0c021bbd3b224390446c29651f97d3e6050e7f/icon/banner_file_size_3.svg" alt="Banner Image">
     </div>
     <style>
         .banner {
