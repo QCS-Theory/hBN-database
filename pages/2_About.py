@@ -80,7 +80,7 @@ with st.container(border=False):
   st.subheader("How to cite")
   st.markdown('''
   For using any of the data, please cite: \n
-    [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* arXiv: 2405.12749 (2024).](https://arxiv.org/abs/2405.12749) \n
+    [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* The Journal of Physical Chemistry C, (2024).](https://doi.org/10.1021/acs.jpcc.4c03404) \n
     For specific properties of particular defects, please also cite the data originally published as follows:
   ''')
   st.markdown('''
