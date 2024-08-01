@@ -86,11 +86,12 @@ with st.container(border=True):
 css = '''
 <style>
     [data-testid="stSidebar"]{
-        min-width: 0px;
+        min-width: 0px;   
         max-width: 0px;
     }
 </style>
 '''
+### min-width and max-width for the sidebar is 230px in case we want to turn it on
 st.markdown(css, unsafe_allow_html=True)
 
 
