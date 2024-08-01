@@ -21,15 +21,15 @@ st.markdown(
     """,  unsafe_allow_html=True,
 )
 
-css = '''
-<style>
-    [data-testid="stSidebar"]{
-        min-width: 0px;
-        max-width: 0px;
-    }
-</style>
-'''
-st.markdown(css, unsafe_allow_html=True)
+#css = '''
+#<style>
+#    [data-testid="stSidebar"]{
+#        min-width: 0px;
+#        max-width: 0px;
+#    }
+#</style>
+#'''
+#st.markdown(css, unsafe_allow_html=True)
 st.markdown('<style>div.block-container{padding-top:1rem;}</style>',unsafe_allow_html=True)
 
 with st.container(border=True):
