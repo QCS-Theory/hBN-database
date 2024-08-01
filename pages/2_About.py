@@ -86,20 +86,20 @@ with st.container(border=False):
   st.markdown('''
   Quantum memory properties
   * [Cholsuk, Chanaprom, Aslı Çakan, Sujin Suwanna, and Tobias Vogl. *"Identifying electronic transitions of defects \
-  in hexagonal boron nitride for quantum memories."* Advanced Optical Materials , 2024, 12, 2302760: \
-  2302760.](https://doi.org/10.1002/adom.202302760)
+  in hexagonal boron nitride for quantum memories."* Advanced Optical Materials , 2024, 12, 2302760. \
+  ](https://doi.org/10.1002/adom.202302760)
   ''')
   st.markdown('''
       Polarization dynamics properties for carbon-related defects
       * [Kumar, Anand, Caglar Samaner, Chanaprom Cholsuk, Tjorben Matthes, Serkan Paçal, Yagız Oyun, Ashkan Zand et al. \
-      *"Polarization dynamics of solid-state quantum emitters."* ACS nano, 2024, 18, 7, 5270: \
-      5270-5281.](https://doi.org/10.1021/acsnano.3c08940)
+      *"Polarization dynamics of solid-state quantum emitters."* ACS nano, 2024, 18, 7, 5270. \
+      ](https://doi.org/10.1021/acsnano.3c08940)
       ''')
   st.markdown('''
       Photophysical properties
       * [Cholsuk, Chanaprom, Sujin Suwanna, and Tobias Vogl. *"Comprehensive scheme for identifying defects in solid-state \
-      quantum systems."* The Journal of Physical Chemistry Letters, 2023, 14, 29, 6564: \
-      6564-6571.](https://doi.org/10.1021/acs.jpclett.3c01475)
+      quantum systems."* The Journal of Physical Chemistry Letters, 2023, 14, 29, 6564. \
+      ](https://doi.org/10.1021/acs.jpclett.3c01475)
       ''')
 
 
