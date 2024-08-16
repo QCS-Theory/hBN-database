@@ -80,7 +80,7 @@ with st.container(border=False):
   st.subheader("How to cite")
   st.markdown('''
   For using any of the data, please cite: \n
-    [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* The Journal of Physical Chemistry C, 2024, 128, 30, 12716.](https://doi.org/10.1021/acs.jpcc.4c03404) \n
+    [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* The Journal of Physical Chemistry C, 2024, 128 (30), 12716.](https://doi.org/10.1021/acs.jpcc.4c03404) \n
     For specific properties of particular defects, please also cite the data originally published as follows:
   ''')
   st.markdown('''
@@ -92,13 +92,13 @@ with st.container(border=False):
   st.markdown('''
       Polarization dynamics properties for carbon-related defects
       * [Kumar, Anand, Caglar Samaner, Chanaprom Cholsuk, Tjorben Matthes, Serkan Paçal, Yagız Oyun, Ashkan Zand et al. \
-      *"Polarization dynamics of solid-state quantum emitters."* ACS nano, 2024, 18, 7, 5270. \
+      *"Polarization dynamics of solid-state quantum emitters."* ACS nano, 2024, 18 (7), 5270. \
       ](https://doi.org/10.1021/acsnano.3c08940)
       ''')
   st.markdown('''
       Photophysical properties
       * [Cholsuk, Chanaprom, Sujin Suwanna, and Tobias Vogl. *"Comprehensive scheme for identifying defects in solid-state \
-      quantum systems."* The Journal of Physical Chemistry Letters, 2023, 14, 29, 6564. \
+      quantum systems."* The Journal of Physical Chemistry Letters, 2023, 14 (29), 6564. \
       ](https://doi.org/10.1021/acs.jpclett.3c01475)
       ''')
 
