@@ -250,7 +250,7 @@ with st.container(border=False):
 
       4. Comparing several parameters between the database and experiments is expected to yield the right defect promising for the experiment. The database \
       will be frequently updated with new defects and new defect properties. In addition, users can also request specific data (defects or properties) which \
-      will be prioritized for the next update.
+      will be prioritized for the next update
     ''')
 
 st.header("References")
