@@ -1,0 +1,39 @@
+name: Ping Website (Finite Runs)
+
+on:
+  schedule:
+    - cron: '*/1 * * * *'  # Runs every 1 mins
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Read ping count
+      id: read_count
+      run: |
+        if [ -f .ping_count ]; then
+          count=$(cat .ping_count)
+        else
+          count=0
+        fi
+        echo "Ping count: $count"
+        echo "::set-output name=count::$count"
+
+    - name: Stop if limit reached
+      if: steps.read_count.outputs.count == '1'  # Set the maximum number of pings
+      run: echo "Ping limit reached. Stopping."
+
+    - name: Ping website
+      if: steps.read_count.outputs.count != '1'
+      run: |
+        curl -I https://yourwebsite.com
+        new_count=$((steps.read_count.outputs.count + 1))
+        echo $new_count > .ping_count
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        git add .ping_count
+        git commit -m "Ping count update: $new_count"
+        git push origin main
