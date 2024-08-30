@@ -2,7 +2,7 @@ name: Ping Website (Finite Runs)
 
 on:
   schedule:
-    - cron: '*/1 * * * *'  # Runs every 1 mins
+    - cron: '*/1 * * * *'  # Runs every 1 minutes
 
 jobs:
   ping:
@@ -11,25 +11,28 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Initialize ping count
+      id: init_count
+      run: |
+        if [ ! -f .ping_count ]; then
+          echo 0 > .ping_count
+        fi
+
     - name: Read ping count
       id: read_count
       run: |
-        if [ -f .ping_count ]; then
-          count=$(cat .ping_count)
-        else
-          count=0
-        fi
+        count=$(cat .ping_count)
         echo "Ping count: $count"
         echo "::set-output name=count::$count"
 
     - name: Stop if limit reached
-      if: steps.read_count.outputs.count == '1'  # Set the maximum number of pings
+      if: steps.read_count.outputs.count == '2'  # Stop after 2 pings
       run: echo "Ping limit reached. Stopping."
 
     - name: Ping website
-      if: steps.read_count.outputs.count != '1'
+      if: steps.read_count.outputs.count != '2'
       run: |
-        curl -I https://hbn-database.streamlit.app
+        curl -I https://yourwebsite.com
         new_count=$((steps.read_count.outputs.count + 1))
         echo $new_count > .ping_count
         git config --global user.email "theory@qcs.cit.tum.de"
