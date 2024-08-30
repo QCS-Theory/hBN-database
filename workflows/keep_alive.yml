@@ -32,7 +32,7 @@ jobs:
     - name: Ping website
       if: steps.read_count.outputs.count != '2'
       run: |
-        curl -I https://yourwebsite.com
+        curl -I https://hbn-database.streamlit.app/
         new_count=$((steps.read_count.outputs.count + 1))
         echo $new_count > .ping_count
         git config --global user.email "theory@qcs.cit.tum.de"
