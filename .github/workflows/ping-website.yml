@@ -2,7 +2,7 @@ name: Ping Website
 
 on:
   schedule:
-    - cron: '*/2 * * * *'  # Runs every 2 minute
+    - cron: '*/15 * * * *'  # Runs every 15 minute
 
 jobs:
   ping:
@@ -25,7 +25,7 @@ jobs:
         echo "::set-output name=count::$count"
 
     - name: Stop if limit reached
-      if: ${{ steps.read_count.outputs.count == '2' }}  # Stop after 2 ping test
+      if: ${{ steps.read_count.outputs.count == '2' }}  # Stop after 2 pings
       run: |
         echo "Ping limit reached. Stopping."
         exit 0 # Stop the workflow
