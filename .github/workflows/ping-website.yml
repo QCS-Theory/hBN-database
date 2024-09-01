@@ -2,7 +2,7 @@ name: Ping Website
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # Runs every 15 minute
+    - cron: '0 * * * *'  # Runs every 15 minute '*/15 * * * *''
 
 jobs:
   ping:
@@ -25,13 +25,13 @@ jobs:
         echo "::set-output name=count::$count"
 
     - name: Stop if limit reached
-      if: ${{ steps.read_count.outputs.count == '2' }}  # Stop after 2 pings
+      if: ${{ steps.read_count.outputs.count == '3' }}  # Stop after 3 pings
       run: |
         echo "Ping limit reached. Stopping."
         exit 0 # Stop the workflow
 
     - name: Ping website
-      if: ${{ steps.read_count.outputs.count != '2' }}
+      if: ${{ steps.read_count.outputs.count != '3' }}
       run: |
         curl -I https://hbn-database.streamlit.app/
         count=${{ steps.read_count.outputs.count }}
