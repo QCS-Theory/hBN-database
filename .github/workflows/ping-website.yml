@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Trigger on push to the main branch
   schedule:
-    - cron: '*/2 * * * *'  # Runs every 1 minute
+    - cron: '*/1 * * * *'  # Runs every 1 minute
 
 jobs:
   ping:
@@ -35,7 +35,8 @@ jobs:
       if: ${{ steps.read_count.outputs.count != '1' }}
       run: |
         curl -I https://hbn-database.streamlit.app/
-        new_count=$((steps.read_count.outputs.count + 1))
+        count=${{ steps.read_count.outputs.count }}
+        new_count=$((count + 1))
         echo $new_count > .ping_count
         git config --global user.email "theory@qcs.cit.tum.de"
         git config --global user.name "QCS-Theory"
