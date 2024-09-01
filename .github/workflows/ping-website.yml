@@ -1,9 +1,8 @@
-
-name: Ping Website (Finite Runs)
+name: Ping Website
 
 on:
   schedule:
-    - cron: '*/1 * * * *'  # Runs every 2 minutes
+    - cron: '*/1 * * * *'  # Runs every 1 minute
 
 jobs:
   ping:
@@ -13,23 +12,24 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Initialize ping count
-      id: init_count
       run: |
         if [ ! -f .ping_count ]; then
           echo 0 > .ping_count
         fi
+
     - name: Read ping count
       id: read_count
       run: |
         count=$(cat .ping_count)
         echo "Ping count: $count"
         echo "::set-output name=count::$count"
+
     - name: Stop if limit reached
-      if: steps.read_count.outputs.count == '1'  # Stop after 2 pings
+      if: ${{ steps.read_count.outputs.count == '1' }}  # Stop after 1 ping
       run: echo "Ping limit reached. Stopping."
 
     - name: Ping website
-      if: steps.read_count.outputs.count != '1'
+      if: ${{ steps.read_count.outputs.count != '1' }}
       run: |
         curl -I https://hbn-database.streamlit.app/
         new_count=$((steps.read_count.outputs.count + 1))
