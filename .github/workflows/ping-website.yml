@@ -1,9 +1,6 @@
 name: Ping Website
 
 on:
-  push:
-    branches:
-      - main  # Trigger on push to the main branch
   schedule:
     - cron: '*/2 * * * *'  # Runs every 2 minute
 
@@ -28,7 +25,7 @@ jobs:
         echo "::set-output name=count::$count"
 
     - name: Stop if limit reached
-      if: ${{ steps.read_count.outputs.count == '2' }}  # Stop after 3 ping test
+      if: ${{ steps.read_count.outputs.count == '2' }}  # Stop after 2 ping test
       run: |
         echo "Ping limit reached. Stopping."
         exit 0 # Stop the workflow
