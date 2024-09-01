@@ -1,6 +1,9 @@
 name: Ping Website
 
 on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
   schedule:
     - cron: '*/2 * * * *'  # Runs every 1 minute
 
