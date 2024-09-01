@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Trigger on push to the main branch
   schedule:
-    - cron: '*/2 * * * *'  # Runs every 1 minute
+    - cron: '*/2 * * * *'  # Runs every 2 minute
 
 jobs:
   ping:
@@ -28,7 +28,7 @@ jobs:
         echo "::set-output name=count::$count"
 
     - name: Stop if limit reached
-      if: ${{ steps.read_count.outputs.count == '2' }}  # Stop after 1 ping
+      if: ${{ steps.read_count.outputs.count == '2' }}  # Stop after 2 ping
       run: echo "Ping limit reached. Stopping."
 
     - name: Ping website
