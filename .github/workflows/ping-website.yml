@@ -25,13 +25,13 @@ jobs:
         echo "::set-output name=count::$count"
 
     - name: Stop if limit reached
-      if: ${{ steps.read_count.outputs.count == '3' }}  # Stop after 3 pings
+      if: ${{ steps.read_count.outputs.count == '30' }}  # Stop after 30 pings
       run: |
         echo "Ping limit reached. Stopping."
         exit 0 # Stop the workflow
 
     - name: Ping website
-      if: ${{ steps.read_count.outputs.count != '3' }}
+      if: ${{ steps.read_count.outputs.count != '30' }}
       run: |
         curl -I https://hbn-database.streamlit.app/
         count=${{ steps.read_count.outputs.count }}
