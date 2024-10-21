@@ -113,9 +113,12 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                 "Excitation properties: dipole_y":"Excitation properties: μᵧ (Debye)",
                 "Excitation properties: dipole_z":"Excitation properties: µz (Debye)",
                 "Excitation properties: Intensity":"Excitation properties: Intensity (Debye)",
+                "Excitation properties: Angle of excitation dipole wrt the crystal axis":"Excitation properties: Angle of excitation dipole wrt the crystal axis (degree)",
                 "Emission properties: dipole_x":"Emission properties: µₓ (Debye)",
                 "Emission properties: dipole_y":"Emission properties: μᵧ (Debye)",
-                "Emission properties: dipole_z":"Emission properties: µz (Debye)"},inplace=True)
+                "Emission properties: dipole_z":"Emission properties: µz (Debye)",
+                "Emission properties: Intensity":"Emission properties: Intensity (Debye)",
+                "Emission properties: Angle of excitation dipole wrt the crystal axis":"Emission properties: Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
     # Try to convert datetimes into a standard format (datetime, no timezone)
     for col in df.columns:
         if is_object_dtype(df[col]):
