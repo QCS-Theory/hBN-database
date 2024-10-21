@@ -110,11 +110,11 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.copy()
     df.rename(columns={"Excitation properties: dipole_x":"Excitation properties: µₓ (Debye)",
-                "Excitation properties: dipole_y":"Excitation properties: μᵧ",
-                "Excitation properties: dipole_z":"Excitation properties: µz",
-                "Emission properties: dipole_x":"Emission properties: µₓ",
-                "Emission properties: dipole_y":"Emission properties: μᵧ",
-                "Emission properties: dipole_z":"Emission properties: µz"},inplace=True)
+                "Excitation properties: dipole_y":"Excitation properties: μᵧ (Debye)",
+                "Excitation properties: dipole_z":"Excitation properties: µz (Debye)",
+                "Emission properties: dipole_x":"Emission properties: µₓ (Debye)",
+                "Emission properties: dipole_y":"Emission properties: μᵧ (Debye)",
+                "Emission properties: dipole_z":"Emission properties: µz (Debye)"},inplace=True)
     # Try to convert datetimes into a standard format (datetime, no timezone)
     for col in df.columns:
         if is_object_dtype(df[col]):
