@@ -862,7 +862,7 @@ for tabs in tab_selection:
                     except  KeyError:
                         ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                     ep2=ppdefects.iloc[:,3:]
-                    ep2.rename(columns={"dipole_x":"µₓ","dipole_y":"μᵧ","dipole_z":"µz"},inplace=True)
+                    ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)"},inplace=True)
                     ep2=ep2.T
                     jj =1
                     newheadcol =[]
@@ -889,7 +889,7 @@ for tabs in tab_selection:
                     except  KeyError:
                         ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                     emp=ppdefects.iloc[:,3:]
-                    emp.rename(columns={"dipole_x":"µₓ","dipole_y":"μᵧ","dipole_z":"µz"},inplace=True)
+                    emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)"},inplace=True)
                     emp=emp.T
                     jj =1
                     newheadcol =[]
