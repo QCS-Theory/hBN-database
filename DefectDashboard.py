@@ -112,6 +112,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(columns={"Excitation properties: dipole_x":"Excitation properties: µₓ (Debye)",
                 "Excitation properties: dipole_y":"Excitation properties: μᵧ (Debye)",
                 "Excitation properties: dipole_z":"Excitation properties: µz (Debye)",
+                "Excitation properties: Intensity":"Excitation properties: Intensity (Debye)",
                 "Emission properties: dipole_x":"Emission properties: µₓ (Debye)",
                 "Emission properties: dipole_y":"Emission properties: μᵧ (Debye)",
                 "Emission properties: dipole_z":"Emission properties: µz (Debye)"},inplace=True)
