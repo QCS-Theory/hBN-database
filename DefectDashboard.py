@@ -109,7 +109,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
 
     df = df.copy()
-    df.rename(columns={"Excitation properties: dipole_x":"Excitation properties: µₓ",
+    df.rename(columns={"Excitation properties: dipole_x":"Excitation properties: µₓ (Debye)",
                 "Excitation properties: dipole_y":"Excitation properties: μᵧ",
                 "Excitation properties: dipole_z":"Excitation properties: µz",
                 "Emission properties: dipole_x":"Emission properties: µₓ",
