@@ -1188,7 +1188,7 @@ for tabs in tab_selection:
                         elif spin_transition =="up-up":
                             try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
                             df = pd.read_fwf(try1, sep=" ",header=None)
-
+                ##################
                 band_energy_spinUp_filled_excited_triplet = []
                 band_energy_spinUp_unfilled_excited_triplet = []
                 band_energy_spinDown_filled_excited_triplet = []
@@ -1724,7 +1724,7 @@ for tabs in tab_selection:
                     ####################### download data atomic position ###################################################333
                     with st.container(border=False):
                         st.header("Download data")
-                        cold1, cold2,cold3  = st.columns(3,gap="Small")
+                        cold1, cold2,cold3  = st.columns(3,gap="Small"). # cartesian, fraction, cif files respectively
                         with cold1:
                             try:
                                 st.download_button(
@@ -1773,6 +1773,31 @@ for tabs in tab_selection:
                                         data= open(try1, "r"),
                                         file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}2'
                                     )
+                                #### this part added by Nos 24.10.2024
+                                except FileNotFoundError:
+                                    if chosen_chargestate == ["charge_negative_1"]:
+                                        if spin_transition =="down-down":
+                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                                        elif spin_transition =="up-up":
+                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                                    elif chosen_chargestate == ["charge_positive_1"]:
+                                        if spin_transition =="down-down":
+                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
+                                        elif spin_transition =="up-up":
+                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
+                                    try:
+                                    st.download_button(
+                                        label="VASP cartesian excited triplet",
+                                        data= open(try1, "r"),
+                                        file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}'
+                                    )
+                                    except:
+                                    st.download_button(
+                                        label="VASP cartesian excited triplet",
+                                        data= open(try1, "r"),
+                                        file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}2'
+                                    )
+                ##################
                         with cold2:
                             try:
                                 st.download_button(
