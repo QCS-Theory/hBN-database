@@ -1724,7 +1724,7 @@ for tabs in tab_selection:
                     ####################### download data atomic position ###################################################333
                     with st.container(border=False):
                         st.header("Download data")
-                        cold1, cold2,cold3  = st.columns(3,gap="Small"). # cartesian, fraction, cif files respectively
+                        cold1, cold2,cold3  = st.columns(3,gap="Small") # cartesian, fraction, cif files respectively
                         with cold1:
                             try:
                                 st.download_button(
