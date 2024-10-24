@@ -1767,12 +1767,12 @@ for tabs in tab_selection:
                                         data= open(try1, "r"),
                                         file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}'
                                     )
-                                except:
-                                    st.download_button(
-                                        label="VASP cartesian excited triplet",
-                                        data= open(try1, "r"),
-                                        file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}2'
-                                    )
+                                #except:
+                                #    st.download_button(
+                                #        label="VASP cartesian excited triplet",
+                                #        data= open(try1, "r"),
+                                #        file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}2'
+                                #    )
                                 #### this part added by Nos 24.10.2024
                                 except FileNotFoundError:
                                     if chosen_chargestate == ["charge_negative_1"]:
