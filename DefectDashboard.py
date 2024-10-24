@@ -1789,7 +1789,7 @@ for tabs in tab_selection:
                                         st.download_button(
                                             label="VASP cartesian excited triplet",
                                             data= open(try1, "r"),
-                                            file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}'
+                                            file_name=f'VASP cartesian excited triplet-{str_defect}-charge{chargestate_defect}'
                                         )
                                     except:
                                         st.download_button(
