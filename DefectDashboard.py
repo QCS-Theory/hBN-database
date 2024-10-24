@@ -1786,17 +1786,17 @@ for tabs in tab_selection:
                                         elif spin_transition =="up-up":
                                             try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
                                     try:
-                                    st.download_button(
-                                        label="VASP cartesian excited triplet",
-                                        data= open(try1, "r"),
-                                        file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}'
-                                    )
+                                        st.download_button(
+                                            label="VASP cartesian excited triplet",
+                                            data= open(try1, "r"),
+                                            file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}'
+                                        )
                                     except:
-                                    st.download_button(
-                                        label="VASP cartesian excited triplet",
-                                        data= open(try1, "r"),
-                                        file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}2'
-                                    )
+                                        st.download_button(
+                                            label="VASP cartesian excited triplet",
+                                            data= open(try1, "r"),
+                                            file_name=f'VASP cartesian excited triplet-{str_defect}-{chargestate_defect}2'
+                                        )
                 ##################
                         with cold2:
                             try:
