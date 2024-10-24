@@ -1840,12 +1840,36 @@ for tabs in tab_selection:
                                         data= open(try1, "r"),
                                         file_name=f'VASP fractional excited triplet-{str_defect}-{chargestate_defect}'
                                     )
-                                except:
-                                    st.download_button(
-                                        label="VASP fractional excited triplet",
-                                        data= open(try1, "r"),
-                                        file_name=f'VASP fractional excited triplet-{str_defect}-{chargestate_defect}2'
-                                    )
+                                #except:
+                                #    st.download_button(
+                                #        label="VASP fractional excited triplet",
+                                #        data= open(try1, "r"),
+                                #        file_name=f'VASP fractional excited triplet-{str_defect}-{chargestate_defect}2'
+                                #    )
+                                #### the above part commented and the below part added by Nos 24.10.2024
+                                except FileNotFoundError:
+                                    if chosen_chargestate == ["charge_negative_1"]:
+                                        if spin_transition =="down-down":
+                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                                        elif spin_transition =="up-up":
+                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                                    elif chosen_chargestate == ["charge_positive_1"]:
+                                        if spin_transition =="down-down":
+                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
+                                        elif spin_transition =="up-up":
+                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
+                                    try:
+                                        st.download_button(
+                                            label="VASP fractional excited triplet",
+                                            data= open(try1, "r"),
+                                            file_name=f'VASP fractional excited triplet-{str_defect}-charge{chargestate_defect}'
+                                        )
+                                    except:
+                                        st.download_button(
+                                            label="VASP fractional excited triplet",
+                                            data= open(try1, "r"),
+                                            file_name=f'VASP fractional excited triplet-{str_defect}-{chargestate_defect}2'
+                                        )
                         with cold3:
                             try:
                                 st.download_button(
@@ -1888,12 +1912,36 @@ for tabs in tab_selection:
                                         data= open(try1, "r"),
                                         file_name=f'CIF excited triplet-{str_defect}-{chargestate_defect}.cif'                
                                     )
-                                except:
-                                    st.download_button(
-                                        label="CIF excited triplet",
-                                        data= open(try1, "r"),
-                                        file_name=f'CIF excited triplet-{str_defect}-{chargestate_defect}2.cif'                
-                                    )
+                                #except:
+                                #    st.download_button(
+                                #        label="CIF excited triplet",
+                                #        data= open(try1, "r"),
+                                #        file_name=f'CIF excited triplet-{str_defect}-{chargestate_defect}2.cif'                
+                                #    )
+                                #### the above part commented and the below part added by Nos 24.10.2024
+                                except FileNotFoundError:
+                                    if chosen_chargestate == ["charge_negative_1"]:
+                                        if spin_transition =="down-down":
+                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                                        elif spin_transition =="up-up":
+                                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                                    elif chosen_chargestate == ["charge_positive_1"]:
+                                        if spin_transition =="down-down":
+                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
+                                        elif spin_transition =="up-up":
+                                            try1 = "database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
+                                    try:
+                                        st.download_button(
+                                            label="CIF excited triplet",
+                                            data= open(try1, "r"),
+                                            file_name=f'CIF excited triplet-{str_defect}-charge{chargestate_defect}'
+                                        )
+                                    except:
+                                        st.download_button(
+                                            label="CIF excited triplet",
+                                            data= open(try1, "r"),
+                                            file_name=f'CIF excited triplet-{str_defect}-{chargestate_defect}2'
+                                        )
 
 
             col3, col4 = st.columns(2,gap="medium")
