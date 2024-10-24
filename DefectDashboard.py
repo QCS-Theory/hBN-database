@@ -1174,13 +1174,12 @@ for tabs in tab_selection:
                 try:
                     df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
                 except FileNotFoundError:
-                    if chargestate_defect =="-1":
-                        if spin_transition =="down-down":
-                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
-                            df = pd.read_fwf(try1, sep=" ",header=None)
-                        elif spin_transition =="up-up":
-                            try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
-                            df = pd.read_fwf(try1, sep=" ",header=None)
+                    if spin_transition =="down-down":
+                        try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
+                        df = pd.read_fwf(try1, sep=" ",header=None)
+                    elif spin_transition =="up-up":
+                        try1 = "database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
+                        df = pd.read_fwf(try1, sep=" ",header=None)
 
                 band_energy_spinUp_filled_excited_triplet = []
                 band_energy_spinUp_unfilled_excited_triplet = []
