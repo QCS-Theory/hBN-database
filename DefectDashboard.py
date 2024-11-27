@@ -1984,7 +1984,7 @@ for tabs in tab_selection:
                     Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
-                    Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"].astype(int)
+                    Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]
 
                     try: 
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
