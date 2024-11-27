@@ -234,7 +234,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
-    Photophysical_properties = pd.read_excel('Supplementary_database.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
+    Photophysical_properties = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
     ## rounding numbers
     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
     
@@ -325,7 +325,7 @@ for tabs in tab_selection:
         spin_multiplicity = spin_multiplicity_m.iloc[tabs_index,0]
 
         try: 
-            name_change = pd.read_excel('Supplementary_database.xlsx',sheet_name='updated_data',engine = 'openpyxl')
+            name_change = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='updated_data',engine = 'openpyxl')
             latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
             latexdefect = latexdefect.replace("$","")
 
@@ -610,7 +610,7 @@ for tabs in tab_selection:
                     )
 
             try: 
-                name_change = pd.read_excel('Supplementary_database.xlsx',sheet_name='updated_data',engine = 'openpyxl')
+                name_change = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='updated_data',engine = 'openpyxl')
                 latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
                 latexdefect = latexdefect.replace("$","")
 
@@ -733,7 +733,7 @@ for tabs in tab_selection:
 
 
                     ## dipole
-                    dipole = pd.read_excel('Supplementary_database.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
+                    dipole = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
                     try: 
                         dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                     except  NameError :
@@ -854,7 +854,7 @@ for tabs in tab_selection:
                     tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                     ## col21
                     #tab1.subheader('Excitation Properties')
-                    Photophysical_properties = pd.read_excel('Supplementary_database.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
                     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
@@ -880,7 +880,7 @@ for tabs in tab_selection:
                     ## col22
                     #col22.subheader('Emission Properties')
 
-                    Photophysical_properties = pd.read_excel('Supplementary_database.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
                     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
                     Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
@@ -906,7 +906,7 @@ for tabs in tab_selection:
                     
                     #col23
                     #col23.subheader('Quantum Memory Properties')
-                    Photophysical_properties = pd.read_excel('Supplementary_database.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
                     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
@@ -1503,7 +1503,7 @@ for tabs in tab_selection:
 
 
             try: 
-                name_change = pd.read_excel('Supplementary_database.xlsx',sheet_name='updated_data',engine = 'openpyxl')
+                name_change = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='updated_data',engine = 'openpyxl')
                 latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
                 latexdefect = latexdefect.replace("$","")
 
@@ -1647,7 +1647,7 @@ for tabs in tab_selection:
 
 
                     ## dipole
-                    dipole = pd.read_excel('Supplementary_database.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
+                    dipole = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
                     try: 
                         dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                     except  NameError :
@@ -1952,7 +1952,7 @@ for tabs in tab_selection:
                     tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
                     ## col21
                     #tab1.subheader('Excitation Properties')
-                    Photophysical_properties = pd.read_excel('Supplementary_database.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='Excitation properties',engine = 'openpyxl',header=[0])
                     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
                     Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
                     Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
@@ -1978,7 +1978,7 @@ for tabs in tab_selection:
                     ## col22
                     #col22.subheader('Emission Properties')
 
-                    Photophysical_properties = pd.read_excel('Supplementary_database.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='Emission properties',engine = 'openpyxl',header=[0])
                     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
                     Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
                     Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
@@ -2004,7 +2004,7 @@ for tabs in tab_selection:
                     
                     #col23
                     #col23.subheader('Quantum Memory Properties')
-                    Photophysical_properties = pd.read_excel('Supplementary_database.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
+                    Photophysical_properties = pd.read_excel('Supplementary_database_2.xlsx',sheet_name='Quantum memory properties',engine = 'openpyxl',header=[0])
                     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
                     Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
