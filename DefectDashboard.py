@@ -247,7 +247,7 @@ with Search_cont:
     Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
     Photophysical_properties["Quantum memory properties: g (MHz)"]=Photophysical_properties["Quantum memory properties: g (MHz)"].astype(int)
     Photophysical_properties["Quantum memory properties: g (MHz)"] = Photophysical_properties["Quantum memory properties: g (MHz)"].map("{:.2E}".format)
-    #Photophysical_properties["Emission properties: Configuration Coordinate (amu$^{1/2}$ \AA)"]=Photophysical_properties["Emission properties: Configuration Coordinate (amu$^{1/2}$ \AA)"].round(2)
+    Photophysical_properties["Emission properties: Configuration Coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Emission properties: Configuration Coordinate (amu^(1/2) \AA)"].round(2)
    
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
     df_searchEngine = filter_dataframe(Photophysical_properties)
