@@ -53,7 +53,7 @@ with st.container(border=True):
 st.title("Version")
 
 
-st.subheader("[Version 1.0] - 21.05.2024 ")
+st.subheader("[1.0] - 21.05.2024 ")
 with st.container(border=False):
-  st.markdown(''' test
+  st.markdown(''' Initial public release of the website.
 ''')
