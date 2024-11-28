@@ -52,6 +52,11 @@ with st.container(border=True):
 
 st.title("Version")
 
+st.subheader("[1.1] - 28.11.2024 ")
+with st.container(border=False):
+  st.markdown(''' Configuration coordinates have been added.
+''')
+
 
 st.subheader("[1.0] - 21.05.2024 ")
 with st.container(border=False):
