@@ -64,7 +64,7 @@ with st.container(border=False):
     and is supported by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under \
     Germany's Excellence Strategy - [EXC-2111 - 390814868](https://gepris.dfg.de/gepris/projekt/390814868). \n
 
-    The authors gratefully acknowledge the Gauss Centre for Supercomputing e.V.\ (www.gauss-centre.eu) for funding this project \
+    The authors gratefully acknowledge [the Gauss Centre for Supercomputing e.V.](https://www.gauss-centre.eu) for funding this project \
     by providing computing time on the GCS Supercomputer SuperMUC-NG at [Leibniz Supercomputing Centre](https://www.lrz.de) and on its Linux-Cluster.
   ''')
 
