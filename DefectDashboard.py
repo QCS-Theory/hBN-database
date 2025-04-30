@@ -234,7 +234,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
-    Photophysical_properties = pd.read_excel('Supplementary_database_total.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
+    Photophysical_properties = pd.read_excel('Supplementary_database_totalE.xlsx',sheet_name='updated_data',engine = 'openpyxl',header=[0])
     ## rounding numbers
     Photophysical_properties.iloc[:,4:]=Photophysical_properties.iloc[:,4:].round(2)
     
