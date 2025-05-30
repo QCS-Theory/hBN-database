@@ -1,11 +1,12 @@
 <?php
 // 1) Connect to Strato MySQL
 $pdo = new PDO(
-    'mysql:host=database-5017860702.webspace-host.com;dbname=dbs14235100;charset=utf8mb4',
-    'dbu539545',
+    'mysql:host=database-5017920693.webspace-host.com;dbname=dbs14266576;charset=utf8mb4',
+    'dbu190527',
     'QuantumCommSys2024!',  // your password
     [ PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION ]
 );
+
 
 // 2) Fetch total visits
 $total = (int)$pdo->query('SELECT COUNT(*) FROM visits')->fetchColumn();

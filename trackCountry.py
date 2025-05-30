@@ -9,10 +9,10 @@ app = Flask(__name__)
 # Configuration - adjust these
 GEOIP_DB_PATH = 'GeoLite2-Country.mmdb'
 DB_CONFIG = {
-    'host': 'database-5017860702.webspace-host.com',
-    'user': 'dbu539545',
+    'host': 'database-5017920693.webspace-host.com',
+    'user': 'dbu190527',
     'password': 'QuantumCommSys2024!',
-    'database': 'dbs14235100',
+    'database': 'dbs14266576',
 }
 
 # Initialize GeoIP reader
