@@ -57,7 +57,7 @@ st.title("Acknowledgements")
 st.subheader("")
 with st.container(border=False):
   st.markdown('''
-    test This project is part of the [Munich Quantum Valley](https://www.munich-quantum-valley.de/) initiative, which is supported by 
+    This project is part of the [Munich Quantum Valley](https://www.munich-quantum-valley.de/) initiative, which is supported by 
     the Bavarian State Government with funds from the High-Tech Agenda Bayern Plus. \n
 
     The work is funded by the Federal Ministry of Education and Research (BMBF) under Grant No. 13N16292 \
