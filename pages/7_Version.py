@@ -54,7 +54,7 @@ st.title("Version")
 
 st.subheader("[1.2] - 01.05.2025 ")
 with st.container(border=False):
-  st.markdown(''' Values of total energies for ground and excited states are added.
+  st.markdown(''' Values of total energies for ground and excited states are added. test
 ''')
 
 st.subheader("[1.1] - 28.11.2024 ")
