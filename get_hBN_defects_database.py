@@ -39,7 +39,8 @@ _OPTION_COLUMNS = {
     "structure_excited": "structure_excited",
     "band_ground": "electronic_transition_ground",
     "band_excited": "electronic_transition_excited",
-    "pl": "PL"
+    "pl": "PL",
+    "raman" : "raman"
 }
 
 # Base columns always included
