@@ -172,7 +172,8 @@ with st.container(border=False):
     ["Excited-state structure", "BLOB: atomic structure file (CIF file)", "structure_excited"],
     ["Ground-state electronic structure", "BLOB: raw OUTCAR file (VASP format) for electronic structure", "band_ground"],
     ["Excited-state electronic structure", "BLOB: raw OUTCAR file (VASP format) for electronic structure", "band_excited"],
-    ["PL lineshape", "BLOB: raw PL lineshape file with the broadening parameter (γ) equal to 1", "PL"]
+    ["PL lineshape", "BLOB: raw PL lineshape file with the broadening parameter (γ) equal to 1", "PL"],
+    ["Raman spectrum", "BLOB: raw Raman spectrum file", "raman"]
     ]
 
     df = pd.DataFrame(table_data, columns=["Column name in .db file", "Type and description", "Option"])
