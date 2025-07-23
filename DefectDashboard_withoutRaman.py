@@ -14,6 +14,7 @@ import os
 import warnings
 import time
 import plotly.colors as pc
+
 import sqlite3  # Added for DB support
 
 @st.cache_data
@@ -1457,6 +1458,32 @@ for tabs in tab_selection:
 
                     cif_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/ground/structure.cif"
                     cif_excited_triplet = "monolayer/database_doublet_singlet/" + str_defect + "/doublet/excited/structure.cif"
+
+                elif spin_multiplicity == 'doublet' and host=='bulk':
+                    triplet_path = "bulk/database/" + str_defect + "/doublet/ground/output_database.txt"
+                    excited_triplet_path= "bulk/database/" + str_defect + "/doublet/excited/output_database.txt"
+
+                    atomposition_triplet = "bulk/database/" + str_defect + "/doublet/ground/CONTCAR_cartesian"
+                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/CONTCAR_cartesian"
+
+                    fractional_triplet = "bulk/database/" + str_defect + "/doublet/ground/CONTCAR_fractional"
+                    fractional_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/CONTCAR_fractional"
+
+                    cif_triplet = "bulk/database/" + str_defect + "/doublet/ground/structure.cif"
+                    cif_excited_triplet = "bulk/database/" + str_defect + "/doublet/excited/structure.cif"
+
+                elif spin_multiplicity == 'singlet' and host=='bulk':
+                    triplet_path = "bulk/database/" + str_defect + "/singlet/ground/output_database.txt"
+                    excited_triplet_path= "bulk/database/" + str_defect + "/singlet/excited/output_database.txt"
+
+                    atomposition_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_cartesian"
+                    atomposition_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_cartesian"
+
+                    fractional_triplet = "bulk/database/" + str_defect + "/singlet/ground/CONTCAR_fractional"
+                    fractional_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/CONTCAR_fractional"
+
+                    cif_triplet = "bulk/database/" + str_defect + "/singlet/ground/structure.cif"
+                    cif_excited_triplet = "bulk/database/" + str_defect + "/singlet/excited/structure.cif"
                 
                 # Band structure
                 ########## Ground State ###
@@ -1609,6 +1636,28 @@ for tabs in tab_selection:
 
                         tripletunf_ref = 1
                         excited_triplet_ref = 1
+
+                elif host == 'bulk':
+                    try: 
+                        upfreiplet = np.array(band_energy_spinUp_filled_triplet)
+                        upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
+
+                        upunfreiplet = np.array(band_energy_spinUp_unfilled_triplet)
+                        upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
+                        # Reference energy for filled spin-up bands (last energy below 1.24 eV)
+                        triplet_ref = upfreiplet[upfreiplet < 1.24][-1]
+                        excited_triplet_ref = upfreipletexc[upfreipletexc < 1.24][-1] 
+
+                        # Reference energy for unfilled spin-up bands (first energy above 7.25 eV)
+                        tripletunf_ref = upunfreiplet[upunfreiplet > 7.25][0]
+                        excited_triplet_ref = upunfreipletexc[upunfreipletexc > 7.25][0]
+
+                    except IndexError:
+                        triplet_ref = 1.24
+                        excited_triplet_ref = 1.24
+
+                        tripletunf_ref = 7.25
+                        excited_triplet_ref = 7.25
 
 
                 fup_t = [energy - triplet_ref for energy in band_energy_spinUp_filled_triplet[-spin_nummer:]]
@@ -2017,86 +2066,6 @@ for tabs in tab_selection:
                                     data= open(cif_excited_triplet, "r"),
                                     file_name=f'CIF excited-sate-{str_defect}.cif'                
                                 )
-                
-                if chargestate_defect == 0:
-                    str_charge = "neutral"
-                    chosen_chargestate=["neutral"]
-                elif chargestate_defect == -1:
-                    str_charge = "charge_negative_1"
-                    chosen_chargestate=["charge_negative_1"]
-                elif chargestate_defect == 1:
-                    str_charge = "charge_positive_1"
-                    chosen_chargestate=["charge_positive_1"]
-                else:
-                    chosen_chargestate=[]
-                
-                col_raman = st.columns(1)
-                with col_raman[0]:
-                    with st.container(border=True):
-                        st.header("Raman Spectrum")
-                        raman_peak = []  # Initialize list to store peaks
-                        raman_path = None
-
-                        # Determine file path
-                        if chosen_chargestate == ["neutral"] and spin_multiplicity == 'doublet':
-                            raman_path = f"monolayer/database_doublet_singlet/{str_defect}/doublet/vasp_raman.dat-broaden.dat"
-
-                        elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'singlet':
-                            raman_path = f"monolayer/database_doublet_singlet/{str_defect}/singlet/vasp_raman.dat-broaden.dat"
-                
-                        else:
-                            st.write("**Raman spectrum is not available for this defect**")
-
-                        # Load and plot Raman spectrum if file exists
-                        if raman_path and os.path.exists(raman_path):
-                            data_1 = np.loadtxt(raman_path)
-                            wavenumber_1 = data_1[:, 0]
-                            spectrum_1 = data_1[:, 1]
-
-                            # Find peaks where intensity == 1
-                            for k in range(len(spectrum_1)):
-                                if spectrum_1[k] == 1:
-                                    raman_peak.append(wavenumber_1[k])
-
-                            # Create interactive Plotly figure
-                            fig = go.Figure()
-
-                            fig.add_trace(go.Scatter(
-                                x=wavenumber_1,
-                                y=spectrum_1,
-                                mode='lines',
-                                name='Raman Spectrum',
-                                line=dict(width=2)
-                            ))
-
-                            # Add annotations for each peak
-                            for peak in raman_peak:
-                                fig.add_annotation(
-                                    x=peak,
-                                    y=1,
-                                    text=f"{peak:.0f}",
-                                    showarrow=True,
-                                    arrowhead=1,
-                                    ax=0,
-                                    ay=-40,
-                                    font=dict(size=10)
-                                )
-
-                            fig.update_layout(
-                                xaxis_title='Raman shift (cm⁻¹)',
-                                yaxis_title='Intensity (a.u.)',
-                                xaxis_range=[100, 1700],
-                                yaxis_range=[-0.05, 1.1],
-                                height=500,
-                                margin=dict(l=40, r=40, t=40, b=40),
-                                showlegend=True
-                            )
-
-                            st.plotly_chart(fig, use_container_width=True)
-
-                        elif raman_path:
-                            st.write("**Raman spectrum is not available for this defect.**")
-                
                 if host == 'monolayer':
                     col3, col4 = st.columns(2,gap="medium")
                     with col3:
@@ -2192,6 +2161,267 @@ for tabs in tab_selection:
                                     "Computational Setting": ["DFT calculator", "Functional", "Pseudopotentials","Cutoff Energy","Kpoint",
                                                             "Supercell size", "Energy convergence","Force convergence","Vacuum region" ],
                                     "Value": ["VASP", "HSE06", "PAW","500 eV","Γ point","7x7x1","1e-4 eV","0.01 eV/Å","15 Å"]
+                                }
+                            )
+                            st.dataframe(df, hide_index=True)
+
+                elif host == 'bulk':
+                    ###### for plotting defect formation energy
+                    if spin_multiplicity == 'singlet':
+                        path_formationE_Nrich = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_rich.txt"
+                        path_formationE_Npoor = "bulk/database/" + str_defect + "/singlet/ground/formation_energies_N_poor.txt"
+                    elif spin_multiplicity == 'doublet':
+                        path_formationE_Nrich = "bulk/database/" + str_defect + "/doublet/ground/formation_energies_N_rich.txt"
+                        path_formationE_Npoor = "bulk/database/" + str_defect + "/doublet/ground/formation_energies_N_poor.txt"
+                    # Load both files
+                    rich_data = read_formation_energies(path_formationE_Nrich)
+                    poor_data = read_formation_energies(path_formationE_Npoor)
+
+                    # Fermi level range (0 to 6 eV)
+                    E_F = np.linspace(0, 6, 200) 
+                
+                    # Assign colors for charge states
+                    # You can customize this list as needed
+                    color_palette = pc.qualitative.D3  # or Set1, Set2, etc.
+                    charge_states = sorted(set(state['charge'] for defect in rich_data.values() for state in defect))
+                    color_map = {q: color_palette[i % len(color_palette)] for i, q in enumerate(charge_states)}
+            
+                    # Plot and render N-rich diagram
+                    fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
+                    # Plot and render N-poor diagram
+                    fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
+
+                    ######## for displaying defect formation energy and PL
+                    col3, col4 = st.columns(2,gap="medium")
+                    with col3:
+                        with st.container(border=True):
+                            st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
+                            tab1, tab2 = st.tabs(["N-rich","N-poor"])
+                            with tab1:                
+                                #st.components.v1.html(fig_rich.to_html(include_mathjax='cdn',full_html=False,div_id='formation-rich'),width=550, height=600)
+                                st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
+                            with tab2: 
+                                #st.components.v1.html(fig_poor.to_html(include_mathjax='cdn',full_html=False,div_id='formation-poor'),width=550, height=600)
+                                st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
+
+                    ###### for PL spectrum
+                    # Path to the PL file
+                    if spin_multiplicity == 'singlet':
+                        path_PL = "bulk/database/" + str_defect + "/singlet/ground/PL.txt" 
+                    elif spin_multiplicity == 'doublet':
+                        path_PL = "bulk/database/" + str_defect + "/doublet/ground/PL.txt" 
+
+                    with col4:
+                        with st.container(border=True):
+                            st.header("Luminescence spectrum of "+"${}$".format(latexdefect))
+                            tab1, tab2 = st.tabs(["Photoluminescence","Absorption"])
+                            with tab1:
+                                # Check if the file exists
+                                if os.path.exists(path_PL):
+                                    # Load the data
+                                    data = np.loadtxt(path_PL)
+                                    wavelength = data[:, 0]
+                                    intensity = data[:, 1]
+
+                                    # Create the figure
+                                    fig = go.Figure()
+
+                                    fig.add_trace(go.Scatter(
+                                        x=wavelength,
+                                        y=intensity,
+                                        mode='lines',
+                                        line=dict(width=2, color='orange'),
+                                        name='PL Spectrum'
+                                    ))
+
+                                    # Update axes and layout
+                                    fig.update_xaxes(
+                                        title='Wavelength (nm)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        linewidth=2,
+                                        linecolor='black',
+                                        mirror=True
+                                    )
+                                    fig.update_yaxes(
+                                        title='PL Intensity (arb. units)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        linewidth=2,
+                                        linecolor='black',
+                                        zeroline = False,
+                                        mirror=True
+                                    )
+
+                                    fig.update_layout(
+                                        font=dict(size=16, color="black"),
+                                        width=600,
+                                        height=500,
+                                        margin=dict(l=70, r=70, t=30, b=90),
+                                        showlegend=False
+                                    )                
+                                    st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                                else:
+                                    # Show a message if file is not found
+                                    st.write(f"**Photoluminescence absent owing to a lack of two-level defect states.**")
+
+                            with tab2:
+                                # Check if the file exists
+                                if os.path.exists(path_PL):
+                                    # Load the data
+                                    data = np.loadtxt(path_PL)
+                                    wavelength = data[:, 0]
+                                    intensity = data[:, 1]
+                                    # Find the index of maximum PL intensity
+                                    max_index = np.argmax(intensity)
+                                    # ZPL wavelength is the wavelength corresponding to max intensity
+                                    ZPL_wavelength = wavelength[max_index]
+                                    # Mirror wavelengths about the ZPL
+                                    wavelength_mirrored = 2 * ZPL_wavelength - wavelength
+
+                                    # Optional: sort the mirrored data by ascending wavelength for clean plotting
+                                    sorted_indices = np.argsort(wavelength_mirrored)
+                                    wavelength_mirrored_sorted = wavelength_mirrored[sorted_indices]
+                                    intensity_sorted = intensity[sorted_indices]
+
+                                    # Create the figure
+                                    fig = go.Figure()
+
+                                    fig.add_trace(go.Scatter(
+                                        x=wavelength_mirrored_sorted,
+                                        y=intensity_sorted,
+                                        mode='lines',
+                                        line=dict(width=2, color='orange'),
+                                        name='PL Spectrum'
+                                    ))
+
+                                    # Update axes and layout
+                                    fig.update_xaxes(
+                                        title='Wavelength (nm)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        zeroline = False,
+                                        linewidth=2,
+                                        linecolor='black',
+                                        mirror=True
+                                    )
+                                    fig.update_yaxes(
+                                        title='Normalized Intensity (arb. units)',
+                                        title_font={"size": 18},
+                                        showline=True,
+                                        linewidth=2,
+                                        zeroline = False,
+                                        linecolor='black',
+                                        mirror=True
+                                    )
+
+                                    fig.update_layout(
+                                        font=dict(size=16, color="black"),
+                                        width=600,
+                                        height=500,
+                                        margin=dict(l=100, r=70, t=30, b=90),
+                                        showlegend=False
+                                    )                
+                                    st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
+                                else:
+                                    # Show a message if file is not found
+                                    st.write(f"**Absorption spectrum absent owing to a lack of two-level defect states.**")
+
+                    ######## for displaying 2 tables
+                    col5, col6 = st.columns(2,gap="medium")
+                    with col5:
+                        with st.container(border=True):
+                            st.header("Photophysical properties of "+"${}$".format(latexdefect))
+                            # col21, col22, col23 = st.columns(3)
+                            tab1, tab2, tab3 = st.tabs(["Excitation Properties", "Emission Properties", "Quantum Memory Properties"])
+                            ## col21
+                            #tab1.subheader('Excitation Properties')
+                            Photophysical_properties = load_table('Excitation properties')
+                            Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                            Photophysical_properties["Characteristic time (ns)"]=Photophysical_properties["Characteristic time (ns)"].astype(int)
+                            Photophysical_properties["Characteristic time (ns)"] = Photophysical_properties["Characteristic time (ns)"].map("{:.2E}".format)
+
+                            try: 
+                                ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                            except  NameError :
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            except  KeyError:
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            ep2=ppdefects.iloc[:,3:]
+                            ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
+                            ep2=ep2.T
+                            jj =1
+                            newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                            for head in ep2.iloc[0]:
+                                newheadcol.append('[Value {i}]'.format(i=jj))
+                                jj+=1
+                            ep2.columns =newheadcol
+                            tab1.dataframe(ep2,use_container_width=True)
+
+                            ## col22
+                            #col22.subheader('Emission Properties')
+
+                            Photophysical_properties = load_table('Emission properties')
+                            Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                            Photophysical_properties["ZPL (nm)"]=Photophysical_properties["ZPL (nm)"].astype(int)
+                            Photophysical_properties["Lifetime (ns)"]=Photophysical_properties["Lifetime (ns)"].astype(int)
+                            Photophysical_properties["Lifetime (ns)"] = Photophysical_properties["Lifetime (ns)"].map("{:.2E}".format)
+                            Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]=Photophysical_properties["Configuration coordinate (amu^(1/2) \AA)"]
+                            Photophysical_properties["Ground-state total energy (eV)"]=Photophysical_properties["Ground-state total energy (eV)"]
+                            Photophysical_properties["Excited-state total energy (eV)"]=Photophysical_properties["Excited-state total energy (eV)"]
+
+                            try: 
+                                ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                            except  NameError :
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            except  KeyError:
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            emp=ppdefects.iloc[:,3:]
+                            emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
+                            emp=emp.T
+                            jj =1
+                            newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                            for head in emp.iloc[0]:
+                                newheadcol.append('[Value {i}]'.format(i=jj))
+                                jj+=1
+                            emp.columns =newheadcol
+                            tab2.dataframe(emp,use_container_width=True)
+                            
+                            #col23
+                            #col23.subheader('Quantum Memory Properties')
+                            Photophysical_properties = load_table('Quantum memory properties')
+                            Photophysical_properties.iloc[:,6:]=Photophysical_properties.iloc[:,6:].round(2)
+                            Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"]=Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].astype(int)
+                            Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"] = Photophysical_properties["Qualify factor at n =1.76 & Kappa = 0.05"].map("{:.2E}".format)
+                            Photophysical_properties["g (MHz)"]=Photophysical_properties["g (MHz)"].astype(int)
+                            Photophysical_properties["g (MHz)"] = Photophysical_properties["g (MHz)"].map("{:.2E}".format)
+                        
+                            try: 
+                                ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Charge state'] ==chargetrans[str_charge])]
+                            except  NameError :
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            except  KeyError:
+                                ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
+                            qmp = ppdefects.iloc[:,3:]
+                            qmp=qmp.T
+                            jj =1
+                            newheadcol =[]
+                            #latppdefects.iloc[1,0].replace("$","")
+                            for head in qmp.iloc[0]:
+                                newheadcol.append('[Value {i}]'.format(i=jj))
+                                jj+=1
+                            qmp.columns =newheadcol
+                            tab3.dataframe(qmp,use_container_width=True)
+                    with col6:
+                        with st.container(border=True):
+                            st.header('Computational setting')
+                            df = pd.DataFrame(
+                                {
+                                    "Computational Setting": ["DFT calculator", "Functional", "Pseudopotentials","Cutoff Energy","Kpoint",
+                                                            "Supercell size", "Energy convergence","Force convergence","Van der Waals force" ],
+                                    "Value": ["VASP", "HSE(α=0.32)", "PAW","500 eV","Γ point","6x6x4","1e-4 eV","0.01 eV/Å","DFT-D3"]
                                 }
                             )
                             st.dataframe(df, hide_index=True)
@@ -3197,75 +3427,6 @@ for tabs in tab_selection:
                                                 data= open(try1, "r"),
                                                 file_name=f'CIF excited triplet-{str_defect}-{chargestate_defect}2'
                                             )
-                col_raman = st.columns(1)
-                with col_raman[0]:
-                    with st.container(border=True):
-                        st.header("Raman Spectrum")
-                        raman_peak = []  # Initialize list to store peaks
-                        raman_path = None
-
-                        # Determine file path
-                        if chosen_chargestate == ["neutral"] and spin_multiplicity == 'triplet':
-                            raman_path = f"monolayer/database_triplet/{str_defect}/triplet/vasp_raman.dat-broaden.dat"
-
-                        elif chosen_chargestate == ["neutral"] and spin_multiplicity == 'singlet':
-                            raman_path = f"monolayer/database_triplet/{str_defect}/singlet/vasp_raman.dat-broaden.dat"
-         
-                        elif chosen_chargestate == ["charge_negative_1"] and spin_multiplicity == 'triplet':
-                            raman_path = f"monolayer/database_triplet/{str_defect}/{chosen_chargestate[0]}/triplet/vasp_raman.dat-broaden.dat"
-
-                        else:
-                            st.write("**Raman spectrum is not available for this defect**")
-
-                        # Load and plot Raman spectrum if file exists
-                        if raman_path and os.path.exists(raman_path):
-                            data_1 = np.loadtxt(raman_path)
-                            wavenumber_1 = data_1[:, 0]
-                            spectrum_1 = data_1[:, 1]
-
-                            # Find peaks where intensity == 1
-                            for k in range(len(spectrum_1)):
-                                if spectrum_1[k] == 1:
-                                    raman_peak.append(wavenumber_1[k])
-
-                            # Create interactive Plotly figure
-                            fig = go.Figure()
-
-                            fig.add_trace(go.Scatter(
-                                x=wavenumber_1,
-                                y=spectrum_1,
-                                mode='lines',
-                                name='Raman Spectrum',
-                                line=dict(width=2)
-                            ))
-
-                            # Add annotations for each peak
-                            for peak in raman_peak:
-                                fig.add_annotation(
-                                    x=peak,
-                                    y=1,
-                                    text=f"{peak:.0f}",
-                                    showarrow=True,
-                                    arrowhead=1,
-                                    ax=0,
-                                    ay=-40,
-                                    font=dict(size=10)
-                                )
-
-                            fig.update_layout(
-                                xaxis_title='Raman shift (cm⁻¹)',
-                                yaxis_title='Intensity (a.u.)',
-                                xaxis_range=[100, 1700],
-                                yaxis_range=[-0.05, 1.1],
-                                height=500,
-                                margin=dict(l=40, r=40, t=40, b=40),
-                                showlegend=True
-                            )
-
-                            st.plotly_chart(fig, use_container_width=True)
-
-                        elif raman_path:
-                            st.write("**Raman spectrum is not available for this defect.**")
 
 
                 col3, col4 = st.columns(2,gap="medium")
