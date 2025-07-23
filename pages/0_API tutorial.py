@@ -73,6 +73,17 @@ with st.container(border=False):
         mime="text/x-python"
     )
 
+    url_code_example = "https://raw.githubusercontent.com/QCS-Theory/hBN-database/main/full_code_example_ZPLhistogram.ipynb"
+    response_code_example = requests.get(url_code_example)
+    file_content_code_example = response_code_example.text
+
+    st.download_button(
+        label="Download API_tutorial.ipynb",
+        data=file_content_code_example,
+        file_name="full_code_example_ZPLhistogram.ipynb",
+        mime="text/x-python"
+    )
+
 with st.container(border=False):
     st.markdown("""
     In your Python script or interactive session, import the function.  
