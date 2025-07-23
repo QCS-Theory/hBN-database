@@ -73,11 +73,13 @@ st.markdown(
 st.markdown('<style>div.block-container{padding-top:1rem;}</style>',unsafe_allow_html=True)
 
 with st.container(border=True):
-    colp11, colp1,colp2,colp21, colp3,colp4,colp5,colp6 = st.columns(8, gap="small")
+    colp11, colp0, colp1,colp2,colp21, colp3,colp4,colp5,colp6 = st.columns(9, gap="small")
     with colp11:
         st.page_link("DefectDashboard.py", label="Main database")
+    with colp0:
+        st.page_link("pages/0_API tutorial.py", label="API tutorial")
     with colp1:
-        st.page_link("pages/1_DFT calculation details.py", label="DFT calculation details")
+        st.page_link("pages/1_DFT calculation details.py", label="DFT details")
     with colp2: 
         st.page_link("pages/2_About.py", label="About")
     with colp21:
