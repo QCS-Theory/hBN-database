@@ -1328,7 +1328,8 @@ for tabs in tab_selection:
                         })
                         
                     )
-                    ep2 = ep2.T
+                    ##ep2 = ep2.T
+                    ep2 = ep2.T.astype(str) ## corrected the conversion error 31.07.2025
                     # 3) Rebuild your `[Value i]` headers
                     jj =1
                     newheadcol =[]
@@ -1373,7 +1374,8 @@ for tabs in tab_selection:
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
                     emp=ppdefects.iloc[:,3:]
                     emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
-                    emp=emp.T
+                    ###emp=emp.T
+                    emp=emp.T.astype(str) # Fixed 31.07.2025
                     jj =1
                     newheadcol =[]
                             #latppdefects.iloc[1,0].replace("$","")
@@ -1399,7 +1401,8 @@ for tabs in tab_selection:
                     except  KeyError:
                         ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='bulk')]
                     qmp = ppdefects.iloc[:,3:]
-                    qmp=qmp.T
+                    ###qmp=qmp.T
+                    qmp=qmp.T.astype(str) ## Fixed 31.07.2025
                     jj =1
                     newheadcol =[]
                             #latppdefects.iloc[1,0].replace("$","")
@@ -3297,7 +3300,8 @@ for tabs in tab_selection:
                             ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
                         ep2=ppdefects.iloc[:,3:]
                         ep2.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of excitation dipole wrt the crystal axis":"Angle of excitation dipole wrt the crystal axis (degree)"},inplace=True)
-                        ep2=ep2.T
+                        #ep2=ep2.T
+                        ep2=ep2.T.astype(str)  ## Fixed 31.07.2025
                         jj =1
                         newheadcol =[]
                         #latppdefects.iloc[1,0].replace("$","")
@@ -3327,7 +3331,8 @@ for tabs in tab_selection:
                             ppdefects = Photophysical_properties[Photophysical_properties['Defect'] == str_defect]
                         emp=ppdefects.iloc[:,3:]
                         emp.rename(columns={"dipole_x":"µₓ (Debye)","dipole_y":"μᵧ (Debye)","dipole_z":"µz (Debye)","Intensity":"Intensity (Debye)","Angle of emission dipole wrt the crystal axis":"Angle of emission dipole wrt the crystal axis (degree)","Configuration coordinate (amu^(1/2) \AA)":"Configuration coordinate (amu^(1/2) Å)","Ground-state total energy (eV)":"Ground-state total energy (eV)","Excited-state total energy (eV)":"Excited-state total energy (eV)"},inplace=True)
-                        emp=emp.T
+                        #emp=emp.T
+                        emp=emp.T.astype(str) ## Fixed 31.07.2025
                         jj =1
                         newheadcol =[]
                         #latppdefects.iloc[1,0].replace("$","")
@@ -3353,7 +3358,8 @@ for tabs in tab_selection:
                         except  KeyError:
                             ppdefects = Photophysical_properties[(Photophysical_properties['Defect'] == str_defect) & (Photophysical_properties['Host'] =='monolayer')]
                         qmp = ppdefects.iloc[:,3:]
-                        qmp=qmp.T
+                        #qmp=qmp.T
+                        qmp=qmp.T.astype(str) # Fixed 31.07.2025
                         jj =1
                         newheadcol =[]
                         #latppdefects.iloc[1,0].replace("$","")
