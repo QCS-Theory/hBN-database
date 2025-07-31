@@ -25,6 +25,11 @@ def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_3.
     query = f'SELECT * FROM "{table_name}"'
     df = pd.read_sql_query(query, conn)
     conn.close()
+
+    # Fix for Streamlit serialization: force 'Value 1' to numeric if it exists
+    if 'Value 1' in df.columns:
+        df['Value 1'] = pd.to_numeric(df['Value 1'], errors='coerce')
+
     return df
 
 # --- Replace Excel backend with DB backend ---
