@@ -26,9 +26,12 @@ def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_3.
     df = pd.read_sql_query(query, conn)
     conn.close()
 
-    # Fix for Streamlit serialization: force 'Value 1' to numeric if it exists
-    if 'Value 1' in df.columns:
-        df['Value 1'] = pd.to_numeric(df['Value 1'], errors='coerce')
+    # Fix: attempt to convert all object-type columns to numeric
+    for col in df.select_dtypes(include='object').columns:
+        df[col] = pd.to_numeric(df[col], errors='ignore')  # 'ignore' avoids overwriting true strings
+        # fallback: coerce clearly numeric-looking columns
+        if df[col].str.isnumeric().any():
+            df[col] = pd.to_numeric(df[col], errors='coerce')
 
     return df
 
