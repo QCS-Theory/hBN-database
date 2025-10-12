@@ -3387,7 +3387,7 @@ st.header("References")
 with st.container(border=False):
     st.markdown('''
     For using any of the data, please cite: \n
-    [Chanaprom Cholsuk, Sujin Suwanna, Tobias Vogl, *"Advancing the hBN Defects Database through Photophysical Characterization of Bulk hBN."* 2025, arXiv:2507.18093.](https://doi.org/10.48550/arXiv.2507.18093) \n
+    [Chanaprom Cholsuk, Sujin Suwanna, Tobias Vogl, *"Advancing the hBN Defects Database through Photophysical Characterization of Bulk hBN."* Journal of Materials Chemistry C, 2025.](https://doi.org/10.1039/D5TC02805A) \n
     [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* The Journal of Physical Chemistry C, 2024, 128 (30), 12716.](https://doi.org/10.1021/acs.jpcc.4c03404) \n
     For specific properties of particular defects, please also cite the data originally published as follows:
     ''')
