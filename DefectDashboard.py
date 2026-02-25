@@ -916,7 +916,8 @@ for tabs in tab_selection:
                     else:
                         try: 
                             atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
-                        except NameError or ValueError:
+                        #except NameError or ValueError:
+                        except (NameError, ValueError):
                             latexdefect = 'Al_N'
                             atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
@@ -1817,7 +1818,8 @@ for tabs in tab_selection:
                         else:
                             try: 
                                 atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
-                            except NameError or ValueError:
+                            #except NameError or ValueError:
+                            except (NameError, ValueError):
                                 ## latexdefect = 'Al_N'
                                 if host == 'monolayer':
                                     atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
@@ -2830,7 +2832,8 @@ for tabs in tab_selection:
                         else:
                             try: 
                                 atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
-                            except NameError or ValueError:
+                            #except NameError or ValueError:
+                            except (NameError, ValueError):
                                 latexdefect = 'Al_N'
                                 atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
