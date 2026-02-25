@@ -340,7 +340,9 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                 )
                 st.session_state["refractive_index"] = refractive_index
 
-            elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
+            #elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
+            elif column in ("Excitation properties: Characteristic time (ns)", "Emission properties: Lifetime (ns)", 
+            "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05", "Quantum memory properties: g (MHz)",):
                 df[column] = df[column].astype(float)
                 _min = float(df[column].min())
                 _max = float(df[column].max())
