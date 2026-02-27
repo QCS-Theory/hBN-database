@@ -3399,9 +3399,10 @@ with st.container(border=False):
     st.markdown('''
     Raman spectrum
     * [Cholsuk, Chanaprom, Asli Çakan, Volker Deckert, Sujin Suwanna, and Tobias Vogl. *"Raman signatures of single point defects \
-    in hexagonal boron nitride quantum emitters."* 2025, arXiv: 2502.21118. \
-    ](https://doi.org/10.48550/arXiv.2502.21118)
+    in hexagonal boron nitride quantum emitters."* npj Computational Materials, 2025, 12 (3). \
+    ](https://doi.org/10.1038/s41524-025-01921-x)
     ''')
+
     st.markdown('''
     Quantum memory properties
     * [Cholsuk, Chanaprom, Asli Çakan, Sujin Suwanna, and Tobias Vogl. *"Identifying electronic transitions of defects \
