@@ -553,6 +553,12 @@ with Search_cont:
     Photophysical_properties["Quantum memory properties: g (MHz)"] = Photophysical_properties["Quantum memory properties: g (MHz)"].map("{:.2E}".format)
    
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
+    latex_name_map = (
+        Photophysical_properties
+        .drop_duplicates("Defect")
+        .set_index("Defect")["Defect name"]
+        .to_dict()
+    )
     # Apply filters (renders Defect search + refractive-index)
     df_filtered = filter_dataframe(Photophysical_properties)
 
@@ -644,13 +650,7 @@ for tabs in tab_selection:
         spin_multiplicity = spin_multiplicity_m.iloc[tabs_index,0]
         host = host_m.iloc[tabs_index,0]
 
-        try: 
-            name_change = load_table('updated_data')
-            latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
-            latexdefect = latexdefect.replace("$","")
-
-        except IndexError:
-            latexdefect = str_defect
+        latexdefect = str(latex_name_map.get(str_defect, str_defect)).replace("$", "")
         ##################### Bulk defects
         if host == 'bulk':
             charge_bulk = ['neutral','m1','m2','p1','p2']
@@ -1838,13 +1838,7 @@ for tabs in tab_selection:
                         showline=True, linewidth=2, linecolor='black', mirror=True,
                         )
 
-                try: 
-                    name_change = load_table('updated_data')
-                    latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
-                    latexdefect = latexdefect.replace("$","")
-
-                except IndexError:
-                    latexdefect = str_defect
+                latexdefect = str(latex_name_map.get(str_defect, str_defect)).replace("$", "")
 
                 fig2.update_layout(showlegend=False, 
                                 xaxis_title=r"${}$".format(latexdefect),
@@ -2861,13 +2855,7 @@ for tabs in tab_selection:
                         )
 
 
-                try: 
-                    name_change = load_table('updated_data')
-                    latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
-                    latexdefect = latexdefect.replace("$","")
-
-                except IndexError:
-                    latexdefect = str_defect
+                latexdefect = str(latex_name_map.get(str_defect, str_defect)).replace("$", "")
 
                 fig.update_layout(showlegend=False, 
                                 xaxis_title=r"${}$".format(latexdefect),
