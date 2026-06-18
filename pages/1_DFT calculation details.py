@@ -214,7 +214,7 @@ with st.container(border=False):
 st.header("2. Database acquisition")
 with st.container(border=False):
   st.markdown('''
-    $Figure. 1$ depicts the collection of this database. In the beginning, 158 impurities covering groups III-VI 
+    $Figure. 1$ depicts the collection of this database. In the first database version, 158 impurities covering groups III-VI 
     and their complexes are created in the hBN monolayer. Their total spins are then determined by spin multiplicity: singlet, 
     doublet, and triplet. we found 95 out of 158 defects acting as triplet/singlet states under the neutral-charge state, \
     while the rest preferred the doublet state. For these doublet defects, they will be charged with $\pm 1$ charges. This \
@@ -223,14 +223,7 @@ with st.container(border=False):
     the $\Delta$SCF approach. Taking into account the electronic transitions separately, for instance, from spin up to up or from spin \
     down to down, this yields 257 triplet electronic structures for ground states, 257 triplet electronic structures for excited states,\
      and 211 singlet electronic structures for ground states. We note that only triplet states are considered for their excited states. \
-     As a consequence, the properties can now be extracted by the methodology described above.
-  ''')
-  #st.image('database_workflow_v5.png', caption="""Figure. 1 Flowchart of the DFT database acquisition. A DFT calculation was\
-  # initially performed to investigate hBN defects. After that, ground and excited photophysical properties over 257 \
-  # triplet transitions were extracted. Note that the symbol * denotes properties scheduled for future updates within \
-  # the database. """,width = 900)
-
-  st.image('database_bulk_workflow_v6.png', caption="""Overview of the hBN defects database workflow. The updated database extends \
+     As a consequence, the properties can now be extracted by the methodology described above. In the second version, The updated database extends \
     our previous work on monolayer hBN by introducing a new feature: bulk hBN defect structures. Investigated defects include native \
       vacancies, substitutional impurities (from groups III–VI), and various complexes, with charge states ranging from –2 to +2. \
         For each defect, the most stable charge and spin configurations are identified. Ground-state properties such as defect formation\
@@ -238,7 +231,14 @@ with st.container(border=False):
             configuration coordinates, HR and DW factors, radiative lifetimes, and transition dipole polarizations. All data are compiled \
               into a structured database with an accessible API supporting Python-based queries for integration with ML and data-driven \
                 research workflows. The color scheme is defined as follows: blue blocks represent features available only for bulk, while\
-                   yellow blocks represent features available for both bulk and monolayer. """,width = 900)
+                   yellow blocks represent features available for both bulk and monolayer.
+  ''')
+  #st.image('database_workflow_v5.png', caption="""Figure. 1 Flowchart of the DFT database acquisition. A DFT calculation was\
+  # initially performed to investigate hBN defects. After that, ground and excited photophysical properties over 257 \
+  # triplet transitions were extracted. Note that the symbol * denotes properties scheduled for future updates within \
+  # the database. """,width = 900)
+
+  st.image('database_bulk_workflow_v6.png', caption="""Figure 1. Flowchart of the DFT database acquisition.  """,width = 900)
 
 st.header("3. Defect identification procedure")
 with st.container(border=False):
