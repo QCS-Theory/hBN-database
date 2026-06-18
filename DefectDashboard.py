@@ -610,10 +610,25 @@ with Search_cont:
         )
         return edited_df[edited_df.Select]
 
-    # Display selection
-    selection = dataframe_with_selections(Photophysical_properties.loc[df_filtered.index])
+    # Display filtered table with bulk rows before monolayer rows
+    filtered_display = Photophysical_properties.loc[df_filtered.index].copy()
 
-    MAX_SELECTED_DEFECTS = 2 # Only allows user to tick 2 defects
+    filtered_display["_host_order"] = (
+        filtered_display["Host"]
+        .map({"bulk": 0, "monolayer": 1})
+        .fillna(2)
+    )
+
+    filtered_display = (
+        filtered_display
+        .sort_values(["_host_order", "Defect"], kind="stable")
+        .drop(columns="_host_order")
+    )
+
+    # Display selection
+    selection = dataframe_with_selections(filtered_display)
+
+    MAX_SELECTED_DEFECTS = 2  # Only allows user to tick 2 defects
 
     if len(selection) > MAX_SELECTED_DEFECTS:
         st.warning(
