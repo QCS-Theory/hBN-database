@@ -320,7 +320,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         ]
 
         to_filter_columns = st.multiselect(
-            "Select which defect properties you want to filter",
+            "Default filters are pre-selected. Use the dropdown menu to add or remove defect properties.",
             df.columns.drop('Defect name'),
             default_filter_columns,
             key="filter_columns_selector",
