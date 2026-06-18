@@ -223,7 +223,10 @@ with st.container(border=False):
     the $\Delta$SCF approach. Taking into account the electronic transitions separately, for instance, from spin up to up or from spin \
     down to down, this yields 257 triplet electronic structures for ground states, 257 triplet electronic structures for excited states,\
      and 211 singlet electronic structures for ground states. We note that only triplet states are considered for their excited states. \
-     As a consequence, the properties can now be extracted by the methodology described above. In the second version, The updated database extends \
+     As a consequence, the properties can now be extracted by the methodology described above. 
+  ''')
+  st.markdown('''
+  In the second database version, the updated database extends \
     our previous work on monolayer hBN by introducing a new feature: bulk hBN defect structures. Investigated defects include native \
       vacancies, substitutional impurities (from groups III–VI), and various complexes, with charge states ranging from –2 to +2. \
         For each defect, the most stable charge and spin configurations are identified. Ground-state properties such as defect formation\
