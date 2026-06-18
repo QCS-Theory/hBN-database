@@ -496,7 +496,7 @@ with Search_cont:
     
     Photophysical_properties = load_table('updated_data')
     #stash the original (vacuum) lifetime before formatting
-    Photophysical_properties = load_table('updated_data')
+    # Photophysical_properties = load_table('updated_data')
     original_col = "Emission properties: Lifetime (ns)"
     Photophysical_properties['lifetime_db'] = Photophysical_properties[original_col].astype(float)
     # stash original characteristic time for interactive override
