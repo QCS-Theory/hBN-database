@@ -617,12 +617,21 @@ with Search_cont:
 
 ####### END SEARCH ENGINE ########
 if selection.empty :
-    ele1 = Photophysical_properties[(Photophysical_properties["Defect"] == "AlN") &
-        (Photophysical_properties["Host"]  == "monolayer")]
-    ele2 = Photophysical_properties[Photophysical_properties['Defect']=="AlNPB"]
-    ele12 = pd.concat([ele1,ele2])
+    st.info("No defect selected yet. Showing AlN as an example defect.")
+    # only for the case we want to show AlN and AlNPB as examples
+    #ele1 = Photophysical_properties[(Photophysical_properties["Defect"] == "AlN") &
+    #    (Photophysical_properties["Host"]  == "monolayer")]
+    #ele2 = Photophysical_properties[Photophysical_properties['Defect']=="AlNPB"]
+    #ele12 = pd.concat([ele1,ele2])
+    #chosen_defect = ele12.loc[:,'Defect']
 
-    chosen_defect = ele12.loc[:,'Defect']
+    ele12 = Photophysical_properties[
+            (Photophysical_properties["Defect"] == "AlN") &
+            (Photophysical_properties["Host"] == "monolayer")
+        ]
+
+    chosen_defect = ele12.loc[:, 'Defect']
+
     chosen_defect_m = chosen_defect.reset_index().drop("index", axis='columns')
 
     chargestate_defect = ele12.loc[:,'Charge state']
