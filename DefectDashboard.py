@@ -1111,7 +1111,14 @@ for tabs in tab_selection:
                                                     xaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
                                                     camera_eye=dict(x=0, y=0, z=0.8))
                     )
-                    st.plotly_chart(fig3D, use_container_width=True)
+                    #st.plotly_chart(fig3D, use_container_width=True)
+
+                    st.plotly_chart(
+                        fig3D,
+                        use_container_width=True,
+                        key=f"structure_3d_block1_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                    )
+
 
                     ### download data
                     with st.container(border=False):
@@ -1176,9 +1183,21 @@ for tabs in tab_selection:
                     st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
                     tab1, tab2 = st.tabs(["N-rich","N-poor"])
                     with tab1:                
-                        st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
-                    with tab2: 
-                        st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
+                        st.plotly_chart(
+                            fig_rich,
+                            use_container_width=True,
+                            theme=None,
+                            key=f"formation_energy_rich_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+
+                    with tab2:     
+                        st.plotly_chart(
+                            fig_poor,
+                            use_container_width=True,
+                            theme=None,
+                            key=f"formation_energy_poor_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+
             
             ###### for PL spectrum
             # Path to the PL file
@@ -2031,7 +2050,14 @@ for tabs in tab_selection:
                                                         xaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
                                                         camera_eye=dict(x=0, y=0, z=0.8))
                         )
-                        st.plotly_chart(fig3D, use_container_width=True)
+                        #st.plotly_chart(fig3D, use_container_width=True)
+                        st.plotly_chart(
+                            fig3D,
+                            use_container_width=True,
+                            key=f"structure_3d_block2_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+
+
                         ### download data
                         with st.container(border=False):
                             st.header("Download data")
@@ -2144,7 +2170,14 @@ for tabs in tab_selection:
                                 showlegend=True
                             )
 
-                            st.plotly_chart(fig, use_container_width=True)
+                            #st.plotly_chart(fig, use_container_width=True)
+
+                            st.plotly_chart(
+                                fig,
+                                use_container_width=True,
+                                key=f"raman_spectrum_block1_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                            )
+
 
                         elif raman_path:
                             st.write("**Raman spectrum is not available for this defect.**")
@@ -3028,7 +3061,14 @@ for tabs in tab_selection:
                                                         xaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
                                                         camera_eye=dict(x=0, y=0, z=0.8))
                         )
-                        st.plotly_chart(fig3D, use_container_width=True)
+                        #st.plotly_chart(fig3D, use_container_width=True)
+
+                        st.plotly_chart(
+                            fig3D,
+                            use_container_width=True,
+                            key=f"structure_3d_block3_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+
                         ####################### download data atomic position ###################################################333
                         with st.container(border=False):
                             st.header("Download data")
@@ -3315,7 +3355,13 @@ for tabs in tab_selection:
                                 showlegend=True
                             )
 
-                            st.plotly_chart(fig, use_container_width=True)
+                            #st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(
+                                fig,
+                                use_container_width=True,
+                                key=f"raman_spectrum_block2_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                            )
+
 
                         elif raman_path:
                             st.write("**Raman spectrum is not available for this defect.**")
