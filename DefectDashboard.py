@@ -139,8 +139,9 @@ st.markdown(css, unsafe_allow_html=True)
 # ----------------------------
 # Function to Extract NBANDS
 # ----------------------------
-
+@st.cache_data(show_spinner=False)
 def extract_nbands(outcar_path):
+
     """
     Extracts the NBANDS value from the last non-empty line of the OUTCAR_transition file.
     
