@@ -2346,7 +2346,8 @@ for tabs in tab_selection:
                     cif_excited_triplet = "monolayer/database_triplet/" + str_defect + "/excited_triplet/structure.cif"
 
                     ### Singlet State ###
-                    df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    df = read_output_database(singlet_path, sep=" ")
 
                     band_energy_spinUp_filled = []
                     band_energy_spinUp_unfilled = []
@@ -2374,7 +2375,8 @@ for tabs in tab_selection:
                                 band_energy_spinDown_unfilled.append(float(df_row[1]))
 
                     ### Triplet State ###
-                    df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    df = read_output_database(triplet_path, sep=" ")
 
                     band_energy_spinUp_filled_triplet = []
                     band_energy_spinUp_unfilled_triplet = []
@@ -2403,14 +2405,17 @@ for tabs in tab_selection:
 
                     ### Excited Triplet State ###
                     try:
-                        df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        df = read_output_database(excited_triplet_path, sep=" ")
                     except FileNotFoundError:
                         if spin_transition =="down-down":
                             try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_down/output_database.txt"
-                            df = pd.read_fwf(try1, sep=" ",header=None)
+                            #df = pd.read_fwf(try1, sep=" ",header=None)
+                            df = read_output_database(try1, sep=" ")
                         elif spin_transition =="up-up":
                             try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_up/output_database.txt"
-                            df = pd.read_fwf(try1, sep=" ",header=None)
+                            #df = pd.read_fwf(try1, sep=" ",header=None)
+                            df = read_output_database(try1, sep=" ")
 
                     band_energy_spinUp_filled_excited_triplet = []
                     band_energy_spinUp_unfilled_excited_triplet = []
@@ -2460,7 +2465,8 @@ for tabs in tab_selection:
                     cif_excited_triplet = "monolayer/database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/excited_triplet/structure.cif"
 
                     ### Singlet
-                    df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    df = read_output_database(singlet_path, sep=" ")
                     
                     band_energy_spinUp_filled = []
                     band_energy_spinUp_unfilled = []
@@ -2487,7 +2493,8 @@ for tabs in tab_selection:
                             elif round(float(df_row[2])) == 0:
                                 band_energy_spinDown_unfilled.append(float(df_row[1]))
                     ### Triplet
-                    df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    df = read_output_database(triplet_path, sep=" ")
 
                     band_energy_spinUp_filled_triplet = []
                     band_energy_spinUp_unfilled_triplet = []
@@ -2519,22 +2526,27 @@ for tabs in tab_selection:
                     #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
                     #### add location of charge by Nos 24.10.2024
                     try:
-                        df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        df = read_output_database(excited_triplet_path, sep=" ")
                     except FileNotFoundError:
                         if chosen_chargestate == ["charge_negative_1"]:
                             if spin_transition =="down-down":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                             elif spin_transition =="up-up":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                         elif chosen_chargestate == ["charge_positive_1"]:
                             if spin_transition =="down-down":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                             elif spin_transition =="up-up":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                     ##################
                     band_energy_spinUp_filled_excited_triplet = []
                     band_energy_spinUp_unfilled_excited_triplet = []
