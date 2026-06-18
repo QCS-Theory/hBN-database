@@ -612,7 +612,17 @@ with Search_cont:
 
     # Display selection
     selection = dataframe_with_selections(Photophysical_properties.loc[df_filtered.index])
-    st.write("Your selection:")
+
+    MAX_SELECTED_DEFECTS = 2 # Only allows user to tick 2 defects
+
+    if len(selection) > MAX_SELECTED_DEFECTS:
+        st.warning(
+            f"To keep the website responsive, only the first {MAX_SELECTED_DEFECTS} selected defects are shown. "
+            "Please deselect some defects to view others."
+        )
+        selection = selection.iloc[:MAX_SELECTED_DEFECTS].copy()
+
+    st.write("Your selected defects:")
     st.data_editor(selection, hide_index=True, key="selected_rows_editor")
 
 ####### END SEARCH ENGINE ########
