@@ -54,6 +54,11 @@ with st.container(border=True):
 
 st.title("Version")
 
+st.subheader("[1.4] - 18.06.2026 ")
+with st.container(border=False):
+  st.markdown(''' Website performance and usability were improved.
+''')
+
 st.subheader("[1.3] - 01.07.2025 ")
 with st.container(border=False):
   st.markdown(''' Raman spectra of 100 defects in hBN monolayer are added.
