@@ -949,14 +949,17 @@ for tabs in tab_selection:
                     ########################## atomic position data frame  ###################################
                     if  type(chosen_defect) == str:
                         latexdefect = 'Al_N'
-                        atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                        #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)    
+                        atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian")   
                     else:
                         try: 
-                            atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                            #atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                            atomicposition_sin = read_atomic_positions(atomposition_triplet)
                         #except NameError or ValueError:
                         except (NameError, ValueError):
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                            #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                            atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian")
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):
                         if 0 <row<4:
@@ -1870,17 +1873,21 @@ for tabs in tab_selection:
                         ########################## atomic position data frame  ###################################
                         if  type(chosen_defect) == str:
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                            #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)  
+                            atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian")      
                         else:
                             try: 
-                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                #atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                atomicposition_sin = read_atomic_positions(atomposition_triplet)
                             #except NameError or ValueError:
                             except (NameError, ValueError):
                                 ## latexdefect = 'Al_N'
                                 if host == 'monolayer':
-                                    atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian")
                                 elif host == 'bulk':
-                                    atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    #atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    atomicposition_sin = read_atomic_positions("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian")
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                         for row in range(atomicposition_sin.shape[0]):
                             if 0 <row<4:
@@ -2898,14 +2905,17 @@ for tabs in tab_selection:
                         ######################### atomic position data frame  #################################3
                         if  type(chosen_defect) == str:
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                            #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)   
+                            atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian")     
                         else:
                             try: 
-                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                #atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                atomicposition_sin = read_atomic_positions(atomposition_triplet)
                             #except NameError or ValueError:
                             except (NameError, ValueError):
                                 latexdefect = 'Al_N'
-                                atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian") 
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                         for row in range(atomicposition_sin.shape[0]):
                             if 0 <row<4:
