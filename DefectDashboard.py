@@ -35,6 +35,28 @@ def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_4.
 
     return df
 
+@st.cache_data(show_spinner=False)
+def read_output_database(path: str, sep: str = r"\s+") -> pd.DataFrame:
+    """
+    Cached reader for output_database.txt files.
+
+    This preserves the existing pd.read_fwf reading style,
+    but avoids rereading the same file on every Streamlit rerun.
+    """
+    return pd.read_fwf(
+        path,
+        sep=sep,
+        header=None,
+        skip_blank_lines=True,
+    )
+
+
+@st.cache_data(show_spinner=False)
+def read_atomic_positions(path: str) -> pd.DataFrame:
+    """
+    Cached reader for CONTCAR_cartesian / CONTCAR_fractional-like files.
+    """
+    return pd.read_csv(path, sep=";", header=0)
 # --- Replace Excel backend with DB backend ---
 
 
