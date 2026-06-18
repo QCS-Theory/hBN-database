@@ -343,12 +343,15 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             # left.write("↳")
             # Treat columns with < 10 unique values as categorical
             if is_categorical_dtype(df[column]) or df[column].nunique() < 10:
+                filter_label = "Choose hBN structure: monolayer, bulk, or both. Default is both." if column == "Host" else f"Choose values for {column}"
+
                 user_cat_input = st.multiselect(
-                    f"Values for {column}",
+                    filter_label,
                     df[column].unique(),
                     default=list(df[column].unique()),
                     key=f"filter_category_{column}",
                 )
+
                 df = df[df[column].isin(user_cat_input)]
             elif is_numeric_dtype(df[column]):
                 _min = float(df[column].min())
