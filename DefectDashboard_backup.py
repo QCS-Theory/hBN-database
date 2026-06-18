@@ -853,10 +853,12 @@ for tabs in tab_selection:
                             st.subheader(title)
                             if lbl in figs_ground:
                                 # Ground‐state figure for this charge
-                                st.plotly_chart(figs_ground[lbl], use_container_width=True)
+                                html = figs_ground[lbl].to_html(include_mathjax='cdn')
+                                st.components.v1.html(html, width=530, height=600)
                             else:
                                 # Single excited‐state figure
-                                st.plotly_chart(figs_excited[excited_charge], use_container_width=True)
+                                html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                                st.components.v1.html(html, width=530, height=600)
 
             with col2:
                 with st.container(border=True):
@@ -1211,7 +1213,7 @@ for tabs in tab_selection:
                                         margin=dict(l=70, r=70, t=30, b=90),
                                         showlegend=False
                                     )                
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
                         else:
                                     # Show a message if file is not found
                             st.write(f"**Photoluminescence absent owing to a lack of two-level defect states.**")
@@ -1273,7 +1275,7 @@ for tabs in tab_selection:
                                         margin=dict(l=100, r=70, t=30, b=90),
                                         showlegend=False
                                     )                
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=550, height=600)
                         else:
                                     # Show a message if file is not found
                             st.write(f"**Absorption spectrum absent owing to a lack of two-level defect states.**")
@@ -1804,9 +1806,9 @@ for tabs in tab_selection:
                         st.header('Kohn-Sham electronic transition')
                         tab1, tab2 = st.tabs(["Ground State","Excited State"])
                         with tab1:                
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
                         with tab2: 
-                            st.plotly_chart(fig2, use_container_width=True)
+                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
                 with col2:
                     with st.container(border=True):
                         ########################## atomic position data frame  ###################################
@@ -2818,9 +2820,9 @@ for tabs in tab_selection:
                         st.header('Kohn-Sham electronic transition')
                         tab1, tab2 = st.tabs(["Ground State","Excited State"])
                         with tab1:                
-                            st.plotly_chart(fig, use_container_width=True)
+                            st.components.v1.html(fig.to_html(include_mathjax='cdn'),width=530, height=600)
                         with tab2: 
-                            st.plotly_chart(fig2, use_container_width=True)
+                            st.components.v1.html(fig2.to_html(include_mathjax='cdn'),width=530, height=600)
                 with col2:
                     with st.container(border=True):
                         ######################### atomic position data frame  #################################3
