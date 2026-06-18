@@ -545,13 +545,14 @@ with Search_cont:
             hide_index=True,
             column_config={"Select": st.column_config.CheckboxColumn(required=True)},
             disabled=df.columns,
+            key="main_selection_editor",
         )
         return edited_df[edited_df.Select]
 
     # Display selection
     selection = dataframe_with_selections(Photophysical_properties.loc[df_filtered.index])
     st.write("Your selection:")
-    st.data_editor(selection, hide_index=True)
+    st.data_editor(selection, hide_index=True, key="selected_rows_editor")
 
 ####### END SEARCH ENGINE ########
 if selection.empty :
