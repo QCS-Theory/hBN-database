@@ -665,7 +665,19 @@ for tabs in tab_selection:
             # Map your numeric chargestate_defect → folder name
             charge_map = {0:'neutral', -1:'m1', -2:'m2', 1:'p1', 2:'p2'}
             excited_charge = charge_map[chargestate_defect]
-            for charge in charge_bulk:
+
+            tab_labels = charge_bulk + ['excited']
+
+            selected_bulk_transition = st.radio(
+                "Select bulk charge state",
+                tab_labels,
+                horizontal=True,
+                key=f"bulk_transition_selector_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+            )
+            spin_nummer = 4
+            #for charge in charge_bulk:
+            charges_to_build = [] if selected_bulk_transition == 'excited' else [selected_bulk_transition]
+            for charge in charges_to_build:
                 triplet_path = f"bulk/database/{str_defect}/{charge}/output_database.txt"
                 df = read_output_database(triplet_path)
                 #### Ground states
@@ -769,117 +781,119 @@ for tabs in tab_selection:
             
             # excited_path = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
             # Generic fallback path
-            generic = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
+            if selected_bulk_transition == 'excited':
+                generic = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
 
-            if spin_transition == "up-up":
-                up_path = f"bulk/database/{str_defect}/{excited_charge}/excited_up/output_database.txt"
-                if os.path.exists(up_path):
-                    excited_path = up_path
+                if spin_transition == "up-up":
+                    up_path = f"bulk/database/{str_defect}/{excited_charge}/excited_up/output_database.txt"
+                    if os.path.exists(up_path):
+                        excited_path = up_path
+                    else:
+                        excited_path = generic
+
+                elif spin_transition == "down-down":
+                    down_path = f"bulk/database/{str_defect}/{excited_charge}/excited_down/output_database.txt"
+                    if os.path.exists(down_path):
+                        excited_path = down_path
+                    else:
+                        excited_path = generic
+
                 else:
                     excited_path = generic
 
-            elif spin_transition == "down-down":
-                down_path = f"bulk/database/{str_defect}/{excited_charge}/excited_down/output_database.txt"
-                if os.path.exists(down_path):
-                    excited_path = down_path
-                else:
-                    excited_path = generic
+                df_exc = read_output_database(excited_path)
+                # initialize lists (unchanged)
+                band_energy_spinUp_filled_excited_triplet   = []
+                band_energy_spinUp_unfilled_excited_triplet = []
+                band_energy_spinDown_filled_excited_triplet = []
+                band_energy_spinDown_unfilled_excited_triplet = []
+                fermi_energy_excited_triplet = []
 
-            else:
-                excited_path = generic
+                # parse excited bands (unchanged)
+                NBANDS_exc = extract_nbands(excited_path)
+                for row in range(len(df_exc)):
+                    if row == 0 or row == NBANDS_exc + 4:
+                        df2 = df_exc.iloc[row, 0].split()
+                        if len(df2) >= 3:
+                            fermi_energy_excited_triplet.append(df2[2])
+                    elif 4 <= row < NBANDS_exc + 4:
+                        df2 = df_exc.iloc[row, 0].split()
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if len(df_row) >= 3:
+                            occ = round(float(df_row[2]))
+                            en  = float(df_row[1])
+                            if occ == 1:
+                                band_energy_spinUp_filled_excited_triplet.append(en)
+                            else:
+                                band_energy_spinUp_unfilled_excited_triplet.append(en)
+                    elif row > NBANDS_exc + 9:
+                        df2 = df_exc.iloc[row, 0].split()
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if len(df_row) >= 3:
+                            occ = round(float(df_row[2]))
+                            en  = float(df_row[1])
+                            if occ == 1:
+                                band_energy_spinDown_filled_excited_triplet.append(en)
+                            else:
+                                band_energy_spinDown_unfilled_excited_triplet.append(en)
 
-            df_exc = read_output_database(excited_path)
-            # initialize lists (unchanged)
-            band_energy_spinUp_filled_excited_triplet   = []
-            band_energy_spinUp_unfilled_excited_triplet = []
-            band_energy_spinDown_filled_excited_triplet = []
-            band_energy_spinDown_unfilled_excited_triplet = []
-            fermi_energy_excited_triplet = []
+                # convert Fermi (unchanged)
+                fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
 
-            # parse excited bands (unchanged)
-            NBANDS_exc = extract_nbands(excited_path)
-            for row in range(len(df_exc)):
-                if row == 0 or row == NBANDS_exc + 4:
-                    df2 = df_exc.iloc[row, 0].split()
-                    if len(df2) >= 3:
-                        fermi_energy_excited_triplet.append(df2[2])
-                elif 4 <= row < NBANDS_exc + 4:
-                    df2 = df_exc.iloc[row, 0].split()
-                    df_row = [ele for ele in df2 if ele.strip()]
-                    if len(df_row) >= 3:
-                        occ = round(float(df_row[2]))
-                        en  = float(df_row[1])
-                        if occ == 1:
-                            band_energy_spinUp_filled_excited_triplet.append(en)
-                        else:
-                            band_energy_spinUp_unfilled_excited_triplet.append(en)
-                elif row > NBANDS_exc + 9:
-                    df2 = df_exc.iloc[row, 0].split()
-                    df_row = [ele for ele in df2 if ele.strip()]
-                    if len(df_row) >= 3:
-                        occ = round(float(df_row[2]))
-                        en  = float(df_row[1])
-                        if occ == 1:
-                            band_energy_spinDown_filled_excited_triplet.append(en)
-                        else:
-                            band_energy_spinDown_unfilled_excited_triplet.append(en)
-
-            # convert Fermi (unchanged)
-            fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
-
-            # compute references (you can reuse ground refs or recompute)
-            try:
-                upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
-                upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
-                triplet_ref_exc     = upfreipletexc[upfreipletexc < 1.24][-1]
-                tripletunf_ref_exc  = upunfreipletexc[upunfreipletexc > 7.25][0]
-            except IndexError:
+                # compute references (you can reuse ground refs or recompute)
                 triplet_ref_exc    = 1.24
                 tripletunf_ref_exc = 7.25
+                try:
+                    upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
+                    upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
+                    triplet_ref_exc     = upfreipletexc[upfreipletexc < 1.24][-1]
+                    tripletunf_ref_exc  = upunfreipletexc[upunfreipletexc > 7.25][0]
+                except IndexError:
+                    pass
 
-            # shift energies (unchanged)
-            fup_t_exc    = [e - triplet_ref_exc for e in band_energy_spinUp_filled_excited_triplet[-spin_nummer:]]
-            ufup_t_exc   = [e - triplet_ref_exc for e in band_energy_spinUp_unfilled_excited_triplet[:spin_nummer]]
-            fdown_t_exc  = [e - triplet_ref_exc for e in band_energy_spinDown_filled_excited_triplet[-spin_nummer:]]
-            ufdown_t_exc = [e - triplet_ref_exc for e in band_energy_spinDown_unfilled_excited_triplet[:spin_nummer]]
+                # shift energies (unchanged)
+                fup_t_exc    = [e - triplet_ref_exc for e in band_energy_spinUp_filled_excited_triplet[-spin_nummer:]]
+                ufup_t_exc   = [e - triplet_ref_exc for e in band_energy_spinUp_unfilled_excited_triplet[:spin_nummer]]
+                fdown_t_exc  = [e - triplet_ref_exc for e in band_energy_spinDown_filled_excited_triplet[-spin_nummer:]]
+                ufdown_t_exc = [e - triplet_ref_exc for e in band_energy_spinDown_unfilled_excited_triplet[:spin_nummer]]
 
-            # build excited‐state figure
-            fig_e = go.Figure()
-            spin_marker_exc_fig('fup',   fup_t_exc,  size=0.5, xcor=0.3,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
-            spin_marker_exc_fig('ufup',  ufup_t_exc, size=0.5, xcor=0.3,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
-            spin_marker_exc_fig('fdown', fdown_t_exc, size=0.5, xcor=0.7,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
-            spin_marker_exc_fig('ufdown',ufdown_t_exc, size=0.5, xcor=0.7,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
+                # build excited‐state figure
+                fig_e = go.Figure()
+                spin_marker_exc_fig('fup',   fup_t_exc,  size=0.5, xcor=0.3,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
+                spin_marker_exc_fig('ufup',  ufup_t_exc, size=0.5, xcor=0.3,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
+                spin_marker_exc_fig('fdown', fdown_t_exc, size=0.5, xcor=0.7,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
+                spin_marker_exc_fig('ufdown',ufdown_t_exc, size=0.5, xcor=0.7,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
 
-            # layout styling
-            fig_e.update_xaxes(
-                    title_font = {"size": 30},
-                    showgrid=False,
-                    range=[0, 1],
-                    showticklabels=False,zeroline=False,
-                    showline=True, linewidth=2, linecolor='black', mirror=True
-                    )
+                # layout styling
+                fig_e.update_xaxes(
+                        title_font = {"size": 30},
+                        showgrid=False,
+                        range=[0, 1],
+                        showticklabels=False,zeroline=False,
+                        showline=True, linewidth=2, linecolor='black', mirror=True
+                        )
 
-            fig_e.update_yaxes(
-                    title_font = {"size": 20},
-                    showgrid=False,zeroline=False,
-                    showline=True, linewidth=2, linecolor='black', mirror=True,
-                    )
-                
-            fig_e.update_layout(showlegend=False, 
-                            xaxis_title=r"${}$".format(latexdefect),
-                            yaxis_title=r"$E(eV)$ ",
-                            font=dict(size=18,color="Black")
-                            )
+                fig_e.update_yaxes(
+                        title_font = {"size": 20},
+                        showgrid=False,zeroline=False,
+                        showline=True, linewidth=2, linecolor='black', mirror=True,
+                        )
+                    
+                fig_e.update_layout(showlegend=False, 
+                                xaxis_title=r"${}$".format(latexdefect),
+                                yaxis_title=r"$E(eV)$ ",
+                                font=dict(size=18,color="Black")
+                                )
 
-            figs_excited[excited_charge] = fig_e
+                figs_excited[excited_charge] = fig_e
 
             # Render the six tabs
             col1, col2 = st.columns(2, gap="small")
@@ -887,21 +901,36 @@ for tabs in tab_selection:
             with col1:
                 with st.container(border=True):
                     st.header('Kohn–Sham Electronic Transitions')
+
+                    title = (
+                        selected_bulk_transition
+                        if selected_bulk_transition != 'excited'
+                        else f"Excited ({excited_charge})"
+                    )
+
+                    st.subheader(title)
+
+                    if selected_bulk_transition != 'excited':
+                        html = figs_ground[selected_bulk_transition].to_html(include_mathjax='cdn')
+                        st.components.v1.html(html, width=530, height=600)
+                    else:
+                        html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                        st.components.v1.html(html, width=530, height=600)
                     # Six tabs: five ground states + one excited state
-                    tab_labels = charge_bulk + ['excited']
-                    tabs = st.tabs(tab_labels)
-                    for lbl, tab in zip(tab_labels, tabs):
-                        with tab:
-                            title = lbl if lbl != 'excited' else f"Excited ({excited_charge})"
-                            st.subheader(title)
-                            if lbl in figs_ground:
-                                # Ground‐state figure for this charge
-                                html = figs_ground[lbl].to_html(include_mathjax='cdn')
-                                st.components.v1.html(html, width=530, height=600)
-                            else:
-                                # Single excited‐state figure
-                                html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
-                                st.components.v1.html(html, width=530, height=600)
+                    #tab_labels = charge_bulk + ['excited']
+                    #tabs = st.tabs(tab_labels)
+                    #for lbl, tab in zip(tab_labels, tabs):
+                    #    with tab:
+                    #        title = lbl if lbl != 'excited' else f"Excited ({excited_charge})"
+                    #        st.subheader(title)
+                    #        if lbl in figs_ground:
+                    #            # Ground‐state figure for this charge
+                    #            html = figs_ground[lbl].to_html(include_mathjax='cdn')
+                    #            st.components.v1.html(html, width=530, height=600)
+                    #        else:
+                    #            # Single excited‐state figure
+                    #            html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                    #            st.components.v1.html(html, width=530, height=600)
 
             with col2:
                 with st.container(border=True):
@@ -1182,27 +1211,41 @@ for tabs in tab_selection:
             color_map = {q: color_palette[i % len(color_palette)] for i, q in enumerate(charge_states)}
             
                     # Plot and render N-rich diagram
-            fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
+            #fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
                     # Plot and render N-poor diagram
-            fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
+            #fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
 
             ######## for displaying defect formation energy and PL
-            col3, col4 = st.columns(2,gap="medium")
+            col3, col4 = st.columns(2, gap="medium")
             with col3:
                 with st.container(border=True):
-                    st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
-                    tab1, tab2 = st.tabs(["N-rich","N-poor"])
-                    with tab1:                
+                    st.header("Defect Formation Energy of " + "${}$".format(latexdefect))
+
+                    formation_condition = st.radio(
+                        "Select chemical condition",
+                        ["N-rich", "N-poor"],
+                        horizontal=True,
+                        key=f"formation_condition_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                    )
+
+                    if formation_condition == "N-rich":
+                        fig_form = plot_diagram_plotly(
+                            rich_data,
+                            'Defect Formation Energies (N-rich)'
+                        )
                         st.plotly_chart(
-                            fig_rich,
+                            fig_form,
                             use_container_width=True,
                             theme=None,
                             key=f"formation_energy_rich_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
                         )
-
-                    with tab2:     
+                    else:
+                        fig_form = plot_diagram_plotly(
+                            poor_data,
+                            'Defect Formation Energies (N-poor)'
+                        )
                         st.plotly_chart(
-                            fig_poor,
+                            fig_form,
                             use_container_width=True,
                             theme=None,
                             key=f"formation_energy_poor_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
