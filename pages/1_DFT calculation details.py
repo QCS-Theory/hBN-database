@@ -225,10 +225,20 @@ with st.container(border=False):
      and 211 singlet electronic structures for ground states. We note that only triplet states are considered for their excited states. \
      As a consequence, the properties can now be extracted by the methodology described above.
   ''')
-  st.image('database_workflow_v5.png', caption="""Figure. 1 Flowchart of the DFT database acquisition. A DFT calculation was\
-   initially performed to investigate hBN defects. After that, ground and excited photophysical properties over 257 \
-   triplet transitions were extracted. Note that the symbol * denotes properties scheduled for future updates within \
-   the database. """,width = 900)
+  #st.image('database_workflow_v5.png', caption="""Figure. 1 Flowchart of the DFT database acquisition. A DFT calculation was\
+  # initially performed to investigate hBN defects. After that, ground and excited photophysical properties over 257 \
+  # triplet transitions were extracted. Note that the symbol * denotes properties scheduled for future updates within \
+  # the database. """,width = 900)
+
+  st.image('database_bulk_workflow_v6.png', caption="""Overview of the hBN defects database workflow. The updated database extends \
+    our previous work on monolayer hBN by introducing a new feature: bulk hBN defect structures. Investigated defects include native \
+      vacancies, substitutional impurities (from groups III–VI), and various complexes, with charge states ranging from –2 to +2. \
+        For each defect, the most stable charge and spin configurations are identified. Ground-state properties such as defect formation\
+           energies and electronic structures are computed, followed by excited-state properties including~ZPL, PL and absorption spectra, \
+            configuration coordinates, HR and DW factors, radiative lifetimes, and transition dipole polarizations. All data are compiled \
+              into a structured database with an accessible API supporting Python-based queries for integration with ML and data-driven \
+                research workflows. The color scheme is defined as follows: blue blocks represent features available only for bulk, while\
+                   yellow blocks represent features available for both bulk and monolayer. """,width = 900)
 
 st.header("3. Defect identification procedure")
 with st.container(border=False):
