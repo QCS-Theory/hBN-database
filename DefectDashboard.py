@@ -345,7 +345,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                     min_value=0.1,
                     step=0.01,
                     format="%.2f",
-                    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
+                    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n",
                     key="refractive_index_input",
                 )
                 st.session_state["refractive_index"] = refractive_index
