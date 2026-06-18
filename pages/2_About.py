@@ -82,9 +82,16 @@ with st.container(border=False):
   st.subheader("How to cite")
   st.markdown('''
   For using any of the data, please cite: \n
+    [Chanaprom Cholsuk, Sujin Suwanna, Tobias Vogl, *"Advancing the hBN Defects Database through Photophysical Characterization of Bulk hBN."* Journal of Materials Chemistry C, 2025, 13, 21826.](https://doi.org/10.1039/D5TC02805A) \n
     [Chanaprom Cholsuk, Ashkan Zand, Asli Cakan, Tobias Vogl, *"The hBN defects database: a theoretical compilation of color centers in hexagonal boron nitride."* The Journal of Physical Chemistry C, 2024, 128 (30), 12716.](https://doi.org/10.1021/acs.jpcc.4c03404) \n
     For specific properties of particular defects, please also cite the data originally published as follows:
-  ''')
+    ''')
+  st.markdown('''
+    Raman spectrum
+    * [Cholsuk, Chanaprom, Asli Çakan, Volker Deckert, Sujin Suwanna, and Tobias Vogl. *"Raman signatures of single point defects \
+    in hexagonal boron nitride quantum emitters."* npj Computational Materials, 2025, 12 (3). \
+    ](https://doi.org/10.1038/s41524-025-01921-x)
+    ''')
   st.markdown('''
   Quantum memory properties
   * [Cholsuk, Chanaprom, Aslı Çakan, Sujin Suwanna, and Tobias Vogl. *"Identifying electronic transitions of defects \
