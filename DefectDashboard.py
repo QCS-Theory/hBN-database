@@ -294,6 +294,18 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             key="filter_columns_selector",
         )
 
+        refractive_index = st.number_input(
+            "Refractive index (n)",
+            value=1.85,
+            min_value=0.1,
+            step=0.01,
+            format="%.2f",
+            help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n",
+            key="refractive_index_input",
+        )
+
+        st.session_state["refractive_index"] = refractive_index
+
         for column in to_filter_columns:
             # left, right = st.columns((1, 20))
             # left.write("↳")
@@ -337,18 +349,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                 )
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
-                   ### start here
-                # refractive-index input placed below the defect search
-                refractive_index = st.number_input(
-                    "Refractive index (n)",
-                    value=1.85,
-                    min_value=0.1,
-                    step=0.01,
-                    format="%.2f",
-                    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n",
-                    key="refractive_index_input",
-                )
-                st.session_state["refractive_index"] = refractive_index
+                  
 
             #elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
             elif column in ("Excitation properties: Characteristic time (ns)", "Emission properties: Lifetime (ns)", 
