@@ -312,10 +312,17 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     modification_container = st.container()
 
     with modification_container:
+        default_filter_columns = [
+            'Host',
+            'Defect',
+            'Emission properties: ZPL (nm)',
+            'Emission properties: Lifetime (ns)',
+        ]
+
         to_filter_columns = st.multiselect(
             "Filter dataframe on",
             df.columns.drop('Defect name'),
-            ['Defect', 'Emission properties: ZPL (eV)', 'Emission properties: ZPL (nm)', 'Emission properties: Lifetime (ns)'],
+            default_filter_columns,
             key="filter_columns_selector",
         )
 
