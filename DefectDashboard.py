@@ -1,4 +1,4 @@
-import PIL
+#import PIL
 from pandas.api.types import (
     is_categorical_dtype,
     is_datetime64_any_dtype,
@@ -7,12 +7,12 @@ from pandas.api.types import (
 )
 import streamlit as st
 import numpy as np
-import plotly.express as px
+#import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import os
 import warnings
-import time
+#import time
 import plotly.colors as pc
 import sqlite3  # Added for DB support
 
@@ -35,6 +35,28 @@ def load_table(table_name: str, db_path: str = "Supplementary_database_totalE_4.
 
     return df
 
+@st.cache_data(show_spinner=False)
+def read_output_database(path: str, sep: str = r"\s+") -> pd.DataFrame:
+    """
+    Cached reader for output_database.txt files.
+
+    This preserves the existing pd.read_fwf reading style,
+    but avoids rereading the same file on every Streamlit rerun.
+    """
+    return pd.read_fwf(
+        path,
+        sep=sep,
+        header=None,
+        skip_blank_lines=True,
+    )
+
+
+@st.cache_data(show_spinner=False)
+def read_atomic_positions(path: str) -> pd.DataFrame:
+    """
+    Cached reader for CONTCAR_cartesian / CONTCAR_fractional-like files.
+    """
+    return pd.read_csv(path, sep=";", header=0)
 # --- Replace Excel backend with DB backend ---
 
 
@@ -117,8 +139,9 @@ st.markdown(css, unsafe_allow_html=True)
 # ----------------------------
 # Function to Extract NBANDS
 # ----------------------------
-
+@st.cache_data(show_spinner=False)
 def extract_nbands(outcar_path):
+
     """
     Extracts the NBANDS value from the last non-empty line of the OUTCAR_transition file.
     
@@ -154,7 +177,9 @@ def extract_nbands(outcar_path):
     raise ValueError("No non-empty lines found in the OUTCAR_transition file to extract NBANDS.")
 
 # Function to read defect formation energies from a file
+@st.cache_data(show_spinner=False)
 def read_formation_energies(file_path):
+
     data = {}
     with open(file_path, 'r') as f:
         lines = f.readlines()
@@ -287,8 +312,25 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     modification_container = st.container()
 
     with modification_container:
-        to_filter_columns = st.multiselect("Filter dataframe on", df.columns.drop('Defect name'),['Defect','Emission properties: ZPL (eV)',
-        'Emission properties: ZPL (nm)','Emission properties: Lifetime (ns)'])
+        to_filter_columns = st.multiselect(
+            "Filter dataframe on",
+            df.columns.drop('Defect name'),
+            ['Defect', 'Emission properties: ZPL (eV)', 'Emission properties: ZPL (nm)', 'Emission properties: Lifetime (ns)'],
+            key="filter_columns_selector",
+        )
+
+        refractive_index = st.number_input(
+            "Refractive index (n)",
+            value=1.85,
+            min_value=0.1,
+            step=0.01,
+            format="%.2f",
+            help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n",
+            key="refractive_index_input",
+        )
+
+        st.session_state["refractive_index"] = refractive_index
+
         for column in to_filter_columns:
             # left, right = st.columns((1, 20))
             # left.write("↳")
@@ -298,6 +340,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                     f"Values for {column}",
                     df[column].unique(),
                     default=list(df[column].unique()),
+                    key=f"filter_category_{column}",
                 )
                 df = df[df[column].isin(user_cat_input)]
             elif is_numeric_dtype(df[column]):
@@ -312,6 +355,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_min,
                         step=step,
+                        key=f"filter_min_{column}",
                     )
                 with col002:
                      user_num_input_max = col002.number_input(
@@ -320,25 +364,17 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_max,
                         step=step,
+                        key=f"filter_max_{column}",
                     )
                 df = df[df[column].between(*(user_num_input_min,user_num_input_max))]
             elif column == "Defect":
                 user_text_input = st.text_input(
                     f"To find a defect, use the KrögerVink notation without indices *e.g. AsN for $As_N$*",
+                    key="defect_search_text",
                 )
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
-                   ### start here
-                # refractive-index input placed below the defect search
-                refractive_index = st.number_input(
-                    "Refractive index (n)",
-                    value=1.85,
-                    min_value=0.1,
-                    step=0.01,
-                    format="%.2f",
-                    help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
-                )
-                st.session_state["refractive_index"] = refractive_index
+                  
 
             #elif column == "Excitation properties: Characteristic time (ns)" or "Emission properties: Lifetime (ns)" or "Quantum memory properties: Qualify factor at n =1.76 & Kappa = 0.05" or "Quantum memory properties: g (MHz)":
             elif column in ("Excitation properties: Characteristic time (ns)", "Emission properties: Lifetime (ns)", 
@@ -355,6 +391,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_min,
                         step=step,
+                        key=f"special_filter_min_{column}",
                     )
                 with col002:
                      user_num_input_max = col002.number_input(
@@ -363,6 +400,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_max,
                         step=step,
+                        key=f"special_filter_max_{column}",
                     )
                 df = df[df[column].between(*(user_num_input_min,user_num_input_max))]
                 df[column] = df[column].map("{:.2E}".format)
@@ -381,6 +419,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             else:
                 user_text_input = st.text_input(
                     f"Substring or regex in {column}",
+                    key=f"filter_text_{column}",
                 )
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
@@ -494,9 +533,12 @@ Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
     
-    Photophysical_properties = load_table('updated_data')
-    #stash the original (vacuum) lifetime before formatting
-    Photophysical_properties = load_table('updated_data')
+    #Photophysical_properties = load_table('updated_data')
+
+    updated_data_raw = load_table('updated_data')
+    Photophysical_properties = updated_data_raw.copy()
+
+    
     original_col = "Emission properties: Lifetime (ns)"
     Photophysical_properties['lifetime_db'] = Photophysical_properties[original_col].astype(float)
     # stash original characteristic time for interactive override
@@ -517,6 +559,12 @@ with Search_cont:
     Photophysical_properties["Quantum memory properties: g (MHz)"] = Photophysical_properties["Quantum memory properties: g (MHz)"].map("{:.2E}".format)
    
     Photophysical_properties['Defect name']=Photophysical_properties['Defect name'].map(lambda x: "${}$".format(x.replace("$","")))
+    latex_name_map = (
+        Photophysical_properties
+        .drop_duplicates("Defect")
+        .set_index("Defect")["Defect name"]
+        .to_dict()
+    )
     # Apply filters (renders Defect search + refractive-index)
     df_filtered = filter_dataframe(Photophysical_properties)
 
@@ -545,13 +593,14 @@ with Search_cont:
             hide_index=True,
             column_config={"Select": st.column_config.CheckboxColumn(required=True)},
             disabled=df.columns,
+            key="main_selection_editor",
         )
         return edited_df[edited_df.Select]
 
     # Display selection
     selection = dataframe_with_selections(Photophysical_properties.loc[df_filtered.index])
     st.write("Your selection:")
-    st.data_editor(selection, hide_index=True)
+    st.data_editor(selection, hide_index=True, key="selected_rows_editor")
 
 ####### END SEARCH ENGINE ########
 if selection.empty :
@@ -607,13 +656,7 @@ for tabs in tab_selection:
         spin_multiplicity = spin_multiplicity_m.iloc[tabs_index,0]
         host = host_m.iloc[tabs_index,0]
 
-        try: 
-            name_change = load_table('updated_data')
-            latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
-            latexdefect = latexdefect.replace("$","")
-
-        except IndexError:
-            latexdefect = str_defect
+        latexdefect = str(latex_name_map.get(str_defect, str_defect)).replace("$", "")
         ##################### Bulk defects
         if host == 'bulk':
             charge_bulk = ['neutral','m1','m2','p1','p2']
@@ -622,9 +665,21 @@ for tabs in tab_selection:
             # Map your numeric chargestate_defect → folder name
             charge_map = {0:'neutral', -1:'m1', -2:'m2', 1:'p1', 2:'p2'}
             excited_charge = charge_map[chargestate_defect]
-            for charge in charge_bulk:
+
+            tab_labels = charge_bulk + ['excited']
+
+            selected_bulk_transition = st.radio(
+                "Select bulk charge state",
+                tab_labels,
+                horizontal=True,
+                key=f"bulk_transition_selector_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+            )
+            spin_nummer = 4
+            #for charge in charge_bulk:
+            charges_to_build = [] if selected_bulk_transition == 'excited' else [selected_bulk_transition]
+            for charge in charges_to_build:
                 triplet_path = f"bulk/database/{str_defect}/{charge}/output_database.txt"
-                df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+                df = read_output_database(triplet_path)
                 #### Ground states
                 band_energy_spinUp_filled_triplet = []
                 band_energy_spinUp_unfilled_triplet = []
@@ -726,117 +781,119 @@ for tabs in tab_selection:
             
             # excited_path = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
             # Generic fallback path
-            generic = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
+            if selected_bulk_transition == 'excited':
+                generic = f"bulk/database/{str_defect}/{excited_charge}/excited/output_database.txt"
 
-            if spin_transition == "up-up":
-                up_path = f"bulk/database/{str_defect}/{excited_charge}/excited_up/output_database.txt"
-                if os.path.exists(up_path):
-                    excited_path = up_path
+                if spin_transition == "up-up":
+                    up_path = f"bulk/database/{str_defect}/{excited_charge}/excited_up/output_database.txt"
+                    if os.path.exists(up_path):
+                        excited_path = up_path
+                    else:
+                        excited_path = generic
+
+                elif spin_transition == "down-down":
+                    down_path = f"bulk/database/{str_defect}/{excited_charge}/excited_down/output_database.txt"
+                    if os.path.exists(down_path):
+                        excited_path = down_path
+                    else:
+                        excited_path = generic
+
                 else:
                     excited_path = generic
 
-            elif spin_transition == "down-down":
-                down_path = f"bulk/database/{str_defect}/{excited_charge}/excited_down/output_database.txt"
-                if os.path.exists(down_path):
-                    excited_path = down_path
-                else:
-                    excited_path = generic
+                df_exc = read_output_database(excited_path)
+                # initialize lists (unchanged)
+                band_energy_spinUp_filled_excited_triplet   = []
+                band_energy_spinUp_unfilled_excited_triplet = []
+                band_energy_spinDown_filled_excited_triplet = []
+                band_energy_spinDown_unfilled_excited_triplet = []
+                fermi_energy_excited_triplet = []
 
-            else:
-                excited_path = generic
+                # parse excited bands (unchanged)
+                NBANDS_exc = extract_nbands(excited_path)
+                for row in range(len(df_exc)):
+                    if row == 0 or row == NBANDS_exc + 4:
+                        df2 = df_exc.iloc[row, 0].split()
+                        if len(df2) >= 3:
+                            fermi_energy_excited_triplet.append(df2[2])
+                    elif 4 <= row < NBANDS_exc + 4:
+                        df2 = df_exc.iloc[row, 0].split()
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if len(df_row) >= 3:
+                            occ = round(float(df_row[2]))
+                            en  = float(df_row[1])
+                            if occ == 1:
+                                band_energy_spinUp_filled_excited_triplet.append(en)
+                            else:
+                                band_energy_spinUp_unfilled_excited_triplet.append(en)
+                    elif row > NBANDS_exc + 9:
+                        df2 = df_exc.iloc[row, 0].split()
+                        df_row = [ele for ele in df2 if ele.strip()]
+                        if len(df_row) >= 3:
+                            occ = round(float(df_row[2]))
+                            en  = float(df_row[1])
+                            if occ == 1:
+                                band_energy_spinDown_filled_excited_triplet.append(en)
+                            else:
+                                band_energy_spinDown_unfilled_excited_triplet.append(en)
 
-            df_exc = pd.read_fwf(excited_path, sep="\s+", header=None, skip_blank_lines=True)  # ← unchanged
-            # initialize lists (unchanged)
-            band_energy_spinUp_filled_excited_triplet   = []
-            band_energy_spinUp_unfilled_excited_triplet = []
-            band_energy_spinDown_filled_excited_triplet = []
-            band_energy_spinDown_unfilled_excited_triplet = []
-            fermi_energy_excited_triplet = []
+                # convert Fermi (unchanged)
+                fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
 
-            # parse excited bands (unchanged)
-            NBANDS_exc = extract_nbands(excited_path)
-            for row in range(len(df_exc)):
-                if row == 0 or row == NBANDS_exc + 4:
-                    df2 = df_exc.iloc[row, 0].split()
-                    if len(df2) >= 3:
-                        fermi_energy_excited_triplet.append(df2[2])
-                elif 4 <= row < NBANDS_exc + 4:
-                    df2 = df_exc.iloc[row, 0].split()
-                    df_row = [ele for ele in df2 if ele.strip()]
-                    if len(df_row) >= 3:
-                        occ = round(float(df_row[2]))
-                        en  = float(df_row[1])
-                        if occ == 1:
-                            band_energy_spinUp_filled_excited_triplet.append(en)
-                        else:
-                            band_energy_spinUp_unfilled_excited_triplet.append(en)
-                elif row > NBANDS_exc + 9:
-                    df2 = df_exc.iloc[row, 0].split()
-                    df_row = [ele for ele in df2 if ele.strip()]
-                    if len(df_row) >= 3:
-                        occ = round(float(df_row[2]))
-                        en  = float(df_row[1])
-                        if occ == 1:
-                            band_energy_spinDown_filled_excited_triplet.append(en)
-                        else:
-                            band_energy_spinDown_unfilled_excited_triplet.append(en)
-
-            # convert Fermi (unchanged)
-            fermi_energy_excited_triplet = [float(i) for i in fermi_energy_excited_triplet]
-
-            # compute references (you can reuse ground refs or recompute)
-            try:
-                upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
-                upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
-                triplet_ref_exc     = upfreipletexc[upfreipletexc < 1.24][-1]
-                tripletunf_ref_exc  = upunfreipletexc[upunfreipletexc > 7.25][0]
-            except IndexError:
+                # compute references (you can reuse ground refs or recompute)
                 triplet_ref_exc    = 1.24
                 tripletunf_ref_exc = 7.25
+                try:
+                    upfreipletexc = np.array(band_energy_spinUp_filled_excited_triplet)
+                    upunfreipletexc = np.array(band_energy_spinUp_unfilled_excited_triplet)
+                    triplet_ref_exc     = upfreipletexc[upfreipletexc < 1.24][-1]
+                    tripletunf_ref_exc  = upunfreipletexc[upunfreipletexc > 7.25][0]
+                except IndexError:
+                    pass
 
-            # shift energies (unchanged)
-            fup_t_exc    = [e - triplet_ref_exc for e in band_energy_spinUp_filled_excited_triplet[-spin_nummer:]]
-            ufup_t_exc   = [e - triplet_ref_exc for e in band_energy_spinUp_unfilled_excited_triplet[:spin_nummer]]
-            fdown_t_exc  = [e - triplet_ref_exc for e in band_energy_spinDown_filled_excited_triplet[-spin_nummer:]]
-            ufdown_t_exc = [e - triplet_ref_exc for e in band_energy_spinDown_unfilled_excited_triplet[:spin_nummer]]
+                # shift energies (unchanged)
+                fup_t_exc    = [e - triplet_ref_exc for e in band_energy_spinUp_filled_excited_triplet[-spin_nummer:]]
+                ufup_t_exc   = [e - triplet_ref_exc for e in band_energy_spinUp_unfilled_excited_triplet[:spin_nummer]]
+                fdown_t_exc  = [e - triplet_ref_exc for e in band_energy_spinDown_filled_excited_triplet[-spin_nummer:]]
+                ufdown_t_exc = [e - triplet_ref_exc for e in band_energy_spinDown_unfilled_excited_triplet[:spin_nummer]]
 
-            # build excited‐state figure
-            fig_e = go.Figure()
-            spin_marker_exc_fig('fup',   fup_t_exc,  size=0.5, xcor=0.3,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
-            spin_marker_exc_fig('ufup',  ufup_t_exc, size=0.5, xcor=0.3,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
-            spin_marker_exc_fig('fdown', fdown_t_exc, size=0.5, xcor=0.7,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
-            spin_marker_exc_fig('ufdown',ufdown_t_exc, size=0.5, xcor=0.7,
-                                e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
-                                emin=0, emax=6, fig=fig_e)
+                # build excited‐state figure
+                fig_e = go.Figure()
+                spin_marker_exc_fig('fup',   fup_t_exc,  size=0.5, xcor=0.3,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
+                spin_marker_exc_fig('ufup',  ufup_t_exc, size=0.5, xcor=0.3,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
+                spin_marker_exc_fig('fdown', fdown_t_exc, size=0.5, xcor=0.7,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
+                spin_marker_exc_fig('ufdown',ufdown_t_exc, size=0.5, xcor=0.7,
+                                    e_ref=triplet_ref_exc, bandlimit=tripletunf_ref_exc,
+                                    emin=0, emax=6, fig=fig_e)
 
-            # layout styling
-            fig_e.update_xaxes(
-                    title_font = {"size": 30},
-                    showgrid=False,
-                    range=[0, 1],
-                    showticklabels=False,zeroline=False,
-                    showline=True, linewidth=2, linecolor='black', mirror=True
-                    )
+                # layout styling
+                fig_e.update_xaxes(
+                        title_font = {"size": 30},
+                        showgrid=False,
+                        range=[0, 1],
+                        showticklabels=False,zeroline=False,
+                        showline=True, linewidth=2, linecolor='black', mirror=True
+                        )
 
-            fig_e.update_yaxes(
-                    title_font = {"size": 20},
-                    showgrid=False,zeroline=False,
-                    showline=True, linewidth=2, linecolor='black', mirror=True,
-                    )
-                
-            fig_e.update_layout(showlegend=False, 
-                            xaxis_title=r"${}$".format(latexdefect),
-                            yaxis_title=r"$E(eV)$ ",
-                            font=dict(size=18,color="Black")
-                            )
+                fig_e.update_yaxes(
+                        title_font = {"size": 20},
+                        showgrid=False,zeroline=False,
+                        showline=True, linewidth=2, linecolor='black', mirror=True,
+                        )
+                    
+                fig_e.update_layout(showlegend=False, 
+                                xaxis_title=r"${}$".format(latexdefect),
+                                yaxis_title=r"$E(eV)$ ",
+                                font=dict(size=18,color="Black")
+                                )
 
-            figs_excited[excited_charge] = fig_e
+                figs_excited[excited_charge] = fig_e
 
             # Render the six tabs
             col1, col2 = st.columns(2, gap="small")
@@ -844,21 +901,36 @@ for tabs in tab_selection:
             with col1:
                 with st.container(border=True):
                     st.header('Kohn–Sham Electronic Transitions')
+
+                    title = (
+                        selected_bulk_transition
+                        if selected_bulk_transition != 'excited'
+                        else f"Excited ({excited_charge})"
+                    )
+
+                    st.subheader(title)
+
+                    if selected_bulk_transition != 'excited':
+                        html = figs_ground[selected_bulk_transition].to_html(include_mathjax='cdn')
+                        st.components.v1.html(html, width=530, height=600)
+                    else:
+                        html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                        st.components.v1.html(html, width=530, height=600)
                     # Six tabs: five ground states + one excited state
-                    tab_labels = charge_bulk + ['excited']
-                    tabs = st.tabs(tab_labels)
-                    for lbl, tab in zip(tab_labels, tabs):
-                        with tab:
-                            title = lbl if lbl != 'excited' else f"Excited ({excited_charge})"
-                            st.subheader(title)
-                            if lbl in figs_ground:
-                                # Ground‐state figure for this charge
-                                html = figs_ground[lbl].to_html(include_mathjax='cdn')
-                                st.components.v1.html(html, width=530, height=600)
-                            else:
-                                # Single excited‐state figure
-                                html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
-                                st.components.v1.html(html, width=530, height=600)
+                    #tab_labels = charge_bulk + ['excited']
+                    #tabs = st.tabs(tab_labels)
+                    #for lbl, tab in zip(tab_labels, tabs):
+                    #    with tab:
+                    #        title = lbl if lbl != 'excited' else f"Excited ({excited_charge})"
+                    #        st.subheader(title)
+                    #        if lbl in figs_ground:
+                    #            # Ground‐state figure for this charge
+                    #            html = figs_ground[lbl].to_html(include_mathjax='cdn')
+                    #            st.components.v1.html(html, width=530, height=600)
+                    #        else:
+                    #            # Single excited‐state figure
+                    #            html = figs_excited[excited_charge].to_html(include_mathjax='cdn')
+                    #            st.components.v1.html(html, width=530, height=600)
 
             with col2:
                 with st.container(border=True):
@@ -912,14 +984,17 @@ for tabs in tab_selection:
                     ########################## atomic position data frame  ###################################
                     if  type(chosen_defect) == str:
                         latexdefect = 'Al_N'
-                        atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                        #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)    
+                        atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian")   
                     else:
                         try: 
-                            atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                            #atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                            atomicposition_sin = read_atomic_positions(atomposition_triplet)
                         #except NameError or ValueError:
                         except (NameError, ValueError):
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                            #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                            atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian")
                     atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                     for row in range(atomicposition_sin.shape[0]):
                         if 0 <row<4:
@@ -1003,7 +1078,8 @@ for tabs in tab_selection:
 
 
                     ## dipole
-                    dipole = load_table('updated_data')
+                    #dipole = load_table('updated_data')
+                    dipole = updated_data_raw
                     try: 
                         dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                     except  NameError :
@@ -1074,7 +1150,14 @@ for tabs in tab_selection:
                                                     xaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
                                                     camera_eye=dict(x=0, y=0, z=0.8))
                     )
-                    st.plotly_chart(fig3D, use_container_width=True)
+                    #st.plotly_chart(fig3D, use_container_width=True)
+
+                    st.plotly_chart(
+                        fig3D,
+                        use_container_width=True,
+                        key=f"structure_3d_block1_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                    )
+
 
                     ### download data
                     with st.container(border=False):
@@ -1128,20 +1211,46 @@ for tabs in tab_selection:
             color_map = {q: color_palette[i % len(color_palette)] for i, q in enumerate(charge_states)}
             
                     # Plot and render N-rich diagram
-            fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
+            #fig_rich = plot_diagram_plotly(rich_data, 'Defect Formation Energies (N-rich)')
                     # Plot and render N-poor diagram
-            fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
+            #fig_poor = plot_diagram_plotly(poor_data, 'Defect Formation Energies (N-poor)')
 
             ######## for displaying defect formation energy and PL
-            col3, col4 = st.columns(2,gap="medium")
+            col3, col4 = st.columns(2, gap="medium")
             with col3:
                 with st.container(border=True):
-                    st.header("Defect Formation Energy of "+"${}$".format(latexdefect))
-                    tab1, tab2 = st.tabs(["N-rich","N-poor"])
-                    with tab1:                
-                        st.plotly_chart(fig_rich, use_container_width=True,theme=None)   #  
-                    with tab2: 
-                        st.plotly_chart(fig_poor, use_container_width=True, theme=None)   #  ← change
+                    st.header("Defect Formation Energy of " + "${}$".format(latexdefect))
+
+                    formation_condition = st.radio(
+                        "Select chemical condition",
+                        ["N-rich", "N-poor"],
+                        horizontal=True,
+                        key=f"formation_condition_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                    )
+
+                    if formation_condition == "N-rich":
+                        fig_form = plot_diagram_plotly(
+                            rich_data,
+                            'Defect Formation Energies (N-rich)'
+                        )
+                        st.plotly_chart(
+                            fig_form,
+                            use_container_width=True,
+                            theme=None,
+                            key=f"formation_energy_rich_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+                    else:
+                        fig_form = plot_diagram_plotly(
+                            poor_data,
+                            'Defect Formation Energies (N-poor)'
+                        )
+                        st.plotly_chart(
+                            fig_form,
+                            use_container_width=True,
+                            theme=None,
+                            key=f"formation_energy_poor_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+
             
             ###### for PL spectrum
             # Path to the PL file
@@ -1475,7 +1584,7 @@ for tabs in tab_selection:
                 # Band structure
                 ########## Ground State ###
                 #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
-                df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+                df = read_output_database(triplet_path)
                 # Extract NBANDS automatically from the OUTCAR_transition file
 
                 band_energy_spinUp_filled_triplet = []
@@ -1538,7 +1647,7 @@ for tabs in tab_selection:
                                     
                 ###### Excited State ###
                 #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
-                df = pd.read_fwf(excited_triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+                df = read_output_database(excited_triplet_path)
 
                 band_energy_spinUp_filled_excited_triplet = []
                 band_energy_spinUp_unfilled_excited_triplet = []
@@ -1779,13 +1888,7 @@ for tabs in tab_selection:
                         showline=True, linewidth=2, linecolor='black', mirror=True,
                         )
 
-                try: 
-                    name_change = load_table('updated_data')
-                    latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
-                    latexdefect = latexdefect.replace("$","")
-
-                except IndexError:
-                    latexdefect = str_defect
+                latexdefect = str(latex_name_map.get(str_defect, str_defect)).replace("$", "")
 
                 fig2.update_layout(showlegend=False, 
                                 xaxis_title=r"${}$".format(latexdefect),
@@ -1814,17 +1917,21 @@ for tabs in tab_selection:
                         ########################## atomic position data frame  ###################################
                         if  type(chosen_defect) == str:
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                            #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)  
+                            atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian")      
                         else:
                             try: 
-                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                #atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                atomicposition_sin = read_atomic_positions(atomposition_triplet)
                             #except NameError or ValueError:
                             except (NameError, ValueError):
                                 ## latexdefect = 'Al_N'
                                 if host == 'monolayer':
-                                    atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian")
                                 elif host == 'bulk':
-                                    atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    #atomicposition_sin = pd.read_csv("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                    atomicposition_sin = read_atomic_positions("bulk/database/" + str_defect + "/triplet/CONTCAR_cartesian")
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                         for row in range(atomicposition_sin.shape[0]):
                             if 0 <row<4:
@@ -1907,7 +2014,8 @@ for tabs in tab_selection:
 
 
                         ## dipole
-                        dipole = load_table('updated_data')
+                        #dipole = load_table('updated_data')
+                        dipole = updated_data_raw
                         try: 
                             dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                         except  NameError :
@@ -1994,7 +2102,14 @@ for tabs in tab_selection:
                                                         xaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
                                                         camera_eye=dict(x=0, y=0, z=0.8))
                         )
-                        st.plotly_chart(fig3D, use_container_width=True)
+                        #st.plotly_chart(fig3D, use_container_width=True)
+                        st.plotly_chart(
+                            fig3D,
+                            use_container_width=True,
+                            key=f"structure_3d_block2_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+
+
                         ### download data
                         with st.container(border=False):
                             st.header("Download data")
@@ -2107,7 +2222,14 @@ for tabs in tab_selection:
                                 showlegend=True
                             )
 
-                            st.plotly_chart(fig, use_container_width=True)
+                            #st.plotly_chart(fig, use_container_width=True)
+
+                            st.plotly_chart(
+                                fig,
+                                use_container_width=True,
+                                key=f"raman_spectrum_block1_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                            )
+
 
                         elif raman_path:
                             st.write("**Raman spectrum is not available for this defect.**")
@@ -2269,7 +2391,8 @@ for tabs in tab_selection:
                     cif_excited_triplet = "monolayer/database_triplet/" + str_defect + "/excited_triplet/structure.cif"
 
                     ### Singlet State ###
-                    df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    df = read_output_database(singlet_path, sep=" ")
 
                     band_energy_spinUp_filled = []
                     band_energy_spinUp_unfilled = []
@@ -2297,7 +2420,8 @@ for tabs in tab_selection:
                                 band_energy_spinDown_unfilled.append(float(df_row[1]))
 
                     ### Triplet State ###
-                    df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    df = read_output_database(triplet_path, sep=" ")
 
                     band_energy_spinUp_filled_triplet = []
                     band_energy_spinUp_unfilled_triplet = []
@@ -2326,14 +2450,17 @@ for tabs in tab_selection:
 
                     ### Excited Triplet State ###
                     try:
-                        df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        df = read_output_database(excited_triplet_path, sep=" ")
                     except FileNotFoundError:
                         if spin_transition =="down-down":
                             try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_down/output_database.txt"
-                            df = pd.read_fwf(try1, sep=" ",header=None)
+                            #df = pd.read_fwf(try1, sep=" ",header=None)
+                            df = read_output_database(try1, sep=" ")
                         elif spin_transition =="up-up":
                             try1 = "monolayer/database_triplet/" + str_defect + "/excited_triplet_up/output_database.txt"
-                            df = pd.read_fwf(try1, sep=" ",header=None)
+                            #df = pd.read_fwf(try1, sep=" ",header=None)
+                            df = read_output_database(try1, sep=" ")
 
                     band_energy_spinUp_filled_excited_triplet = []
                     band_energy_spinUp_unfilled_excited_triplet = []
@@ -2383,7 +2510,8 @@ for tabs in tab_selection:
                     cif_excited_triplet = "monolayer/database_triplet/" + str_defect +"/" + chosen_chargestate[0]+ "/excited_triplet/structure.cif"
 
                     ### Singlet
-                    df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(singlet_path, sep=" ",header=None)  
+                    df = read_output_database(singlet_path, sep=" ")
                     
                     band_energy_spinUp_filled = []
                     band_energy_spinUp_unfilled = []
@@ -2410,7 +2538,8 @@ for tabs in tab_selection:
                             elif round(float(df_row[2])) == 0:
                                 band_energy_spinDown_unfilled.append(float(df_row[1]))
                     ### Triplet
-                    df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
+                    df = read_output_database(triplet_path, sep=" ")
 
                     band_energy_spinUp_filled_triplet = []
                     band_energy_spinUp_unfilled_triplet = []
@@ -2442,22 +2571,27 @@ for tabs in tab_selection:
                     #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
                     #### add location of charge by Nos 24.10.2024
                     try:
-                        df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)
+                        df = read_output_database(excited_triplet_path, sep=" ")
                     except FileNotFoundError:
                         if chosen_chargestate == ["charge_negative_1"]:
                             if spin_transition =="down-down":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_down/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                             elif spin_transition =="up-up":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_negative_1/excited_triplet_up/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                         elif chosen_chargestate == ["charge_positive_1"]:
                             if spin_transition =="down-down":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_down/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                             elif spin_transition =="up-up":
                                 try1 = "monolayer/database_triplet/" + str_defect + "/charge_positive_1/excited_triplet_up/output_database.txt"
-                                df = pd.read_fwf(try1, sep=" ",header=None)
+                                #df = pd.read_fwf(try1, sep=" ",header=None)
+                                df = read_output_database(try1, sep=" ")
                     ##################
                     band_energy_spinUp_filled_excited_triplet = []
                     band_energy_spinUp_unfilled_excited_triplet = []
@@ -2772,13 +2906,7 @@ for tabs in tab_selection:
                         )
 
 
-                try: 
-                    name_change = load_table('updated_data')
-                    latexdefect = name_change[name_change['Defect']==str_defect]['Defect name'].reset_index().iloc[0,1]
-                    latexdefect = latexdefect.replace("$","")
-
-                except IndexError:
-                    latexdefect = str_defect
+                latexdefect = str(latex_name_map.get(str_defect, str_defect)).replace("$", "")
 
                 fig.update_layout(showlegend=False, 
                                 xaxis_title=r"${}$".format(latexdefect),
@@ -2828,14 +2956,17 @@ for tabs in tab_selection:
                         ######################### atomic position data frame  #################################3
                         if  type(chosen_defect) == str:
                             latexdefect = 'Al_N'
-                            atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)        
+                            #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian",sep=';', header=0)   
+                            atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + 'AlN' + "/triplet/CONTCAR_cartesian")     
                         else:
                             try: 
-                                atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                #atomicposition_sin = pd.read_csv(atomposition_triplet,sep=';', header=0)
+                                atomicposition_sin = read_atomic_positions(atomposition_triplet)
                             #except NameError or ValueError:
                             except (NameError, ValueError):
                                 latexdefect = 'Al_N'
-                                atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                #atomicposition_sin = pd.read_csv("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian",sep=';', header=0)
+                                atomicposition_sin = read_atomic_positions("monolayer/database_triplet/" + str_defect + "/triplet/CONTCAR_cartesian") 
                         atomicposition = pd.DataFrame(columns = ['properties', 'X','Y','Z'])
                         for row in range(atomicposition_sin.shape[0]):
                             if 0 <row<4:
@@ -2918,7 +3049,8 @@ for tabs in tab_selection:
 
 
                         ## dipole
-                        dipole = load_table('updated_data')
+                        #dipole = load_table('updated_data')
+                        dipole = updated_data_raw
                         try: 
                             dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                         except  NameError :
@@ -2991,7 +3123,14 @@ for tabs in tab_selection:
                                                         xaxis = dict(showgrid=False,backgroundcolor="rgb(0,0,0)",gridcolor="rgb(0,0,0)",zeroline=False,showticklabels =False,title =' '), 
                                                         camera_eye=dict(x=0, y=0, z=0.8))
                         )
-                        st.plotly_chart(fig3D, use_container_width=True)
+                        #st.plotly_chart(fig3D, use_container_width=True)
+
+                        st.plotly_chart(
+                            fig3D,
+                            use_container_width=True,
+                            key=f"structure_3d_block3_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                        )
+
                         ####################### download data atomic position ###################################################333
                         with st.container(border=False):
                             st.header("Download data")
@@ -3278,7 +3417,13 @@ for tabs in tab_selection:
                                 showlegend=True
                             )
 
-                            st.plotly_chart(fig, use_container_width=True)
+                            #st.plotly_chart(fig, use_container_width=True)
+                            st.plotly_chart(
+                                fig,
+                                use_container_width=True,
+                                key=f"raman_spectrum_block2_{tabs_index}_{str_defect}_{chargestate_defect}_{host}",
+                            )
+
 
                         elif raman_path:
                             st.write("**Raman spectrum is not available for this defect.**")
