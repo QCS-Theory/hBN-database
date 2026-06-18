@@ -530,9 +530,12 @@ Search_cont = st.container(border=True)
 with Search_cont:
     st.header("Search engine for hBN defects")
     
-    Photophysical_properties = load_table('updated_data')
-    #stash the original (vacuum) lifetime before formatting
-    # Photophysical_properties = load_table('updated_data')
+    #Photophysical_properties = load_table('updated_data')
+
+    updated_data_raw = load_table('updated_data')
+    Photophysical_properties = updated_data_raw.copy()
+
+    
     original_col = "Emission properties: Lifetime (ns)"
     Photophysical_properties['lifetime_db'] = Photophysical_properties[original_col].astype(float)
     # stash original characteristic time for interactive override
@@ -1043,7 +1046,8 @@ for tabs in tab_selection:
 
 
                     ## dipole
-                    dipole = load_table('updated_data')
+                    #dipole = load_table('updated_data')
+                    dipole = updated_data_raw
                     try: 
                         dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                     except  NameError :
@@ -1964,7 +1968,8 @@ for tabs in tab_selection:
 
 
                         ## dipole
-                        dipole = load_table('updated_data')
+                        #dipole = load_table('updated_data')
+                        dipole = updated_data_raw
                         try: 
                             dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                         except  NameError :
@@ -2998,7 +3003,8 @@ for tabs in tab_selection:
 
 
                         ## dipole
-                        dipole = load_table('updated_data')
+                        #dipole = load_table('updated_data')
+                        dipole = updated_data_raw
                         try: 
                             dipole_emi = dipole[(dipole['Defect'] == str_defect) & (dipole['Charge state'] ==chargetrans[str_charge]) & (dipole['Optical spin transition'] == spin_transition)]
                         except  NameError :
