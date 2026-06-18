@@ -320,14 +320,14 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         ]
 
         to_filter_columns = st.multiselect(
-            "Filter dataframe on",
+            "Select which defect properties you want to filter",
             df.columns.drop('Defect name'),
             default_filter_columns,
             key="filter_columns_selector",
         )
 
         refractive_index = st.number_input(
-            "Refractive index (n)",
+            "Refractive index (n) of host",
             value=1.85,
             min_value=0.1,
             step=0.01,
@@ -376,7 +376,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                 df = df[df[column].between(*(user_num_input_min,user_num_input_max))]
             elif column == "Defect":
                 user_text_input = st.text_input(
-                    f"To find a specific defect, use the KrögerVink notation without indices *e.g. AsN for $As_N$*; otherwise, leave this field blank to show all defects.",
+                    f"To find a specific defect, use the KrögerVink notation without indices *e.g. CB for $C_B$*; otherwise, leave this field blank to show all defects.",
                     key="defect_search_text",
                 )
                 if user_text_input:
