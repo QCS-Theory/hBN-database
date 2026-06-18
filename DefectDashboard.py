@@ -287,8 +287,13 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     modification_container = st.container()
 
     with modification_container:
-        to_filter_columns = st.multiselect("Filter dataframe on", df.columns.drop('Defect name'),['Defect','Emission properties: ZPL (eV)',
-        'Emission properties: ZPL (nm)','Emission properties: Lifetime (ns)'])
+        to_filter_columns = st.multiselect(
+            "Filter dataframe on",
+            df.columns.drop('Defect name'),
+            ['Defect', 'Emission properties: ZPL (eV)', 'Emission properties: ZPL (nm)', 'Emission properties: Lifetime (ns)'],
+            key="filter_columns_selector",
+        )
+
         for column in to_filter_columns:
             # left, right = st.columns((1, 20))
             # left.write("↳")
@@ -298,6 +303,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                     f"Values for {column}",
                     df[column].unique(),
                     default=list(df[column].unique()),
+                    key=f"filter_category_{column}",
                 )
                 df = df[df[column].isin(user_cat_input)]
             elif is_numeric_dtype(df[column]):
@@ -312,6 +318,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_min,
                         step=step,
+                        key=f"filter_min_{column}",
                     )
                 with col002:
                      user_num_input_max = col002.number_input(
@@ -320,11 +327,13 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_max,
                         step=step,
+                        key=f"filter_max_{column}",
                     )
                 df = df[df[column].between(*(user_num_input_min,user_num_input_max))]
             elif column == "Defect":
                 user_text_input = st.text_input(
                     f"To find a defect, use the KrögerVink notation without indices *e.g. AsN for $As_N$*",
+                    key="defect_search_text",
                 )
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
@@ -337,6 +346,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                     step=0.01,
                     format="%.2f",
                     help="Adjust the reported vacuum lifetime via τ = τ₀·1.85/n"
+                    key="refractive_index_input",
                 )
                 st.session_state["refractive_index"] = refractive_index
 
@@ -355,6 +365,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_min,
                         step=step,
+                        key=f"special_filter_min_{column}",
                     )
                 with col002:
                      user_num_input_max = col002.number_input(
@@ -363,6 +374,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
                         max_value = _max,
                         value =_max,
                         step=step,
+                        key=f"special_filter_max_{column}",
                     )
                 df = df[df[column].between(*(user_num_input_min,user_num_input_max))]
                 df[column] = df[column].map("{:.2E}".format)
@@ -381,6 +393,7 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             else:
                 user_text_input = st.text_input(
                     f"Substring or regex in {column}",
+                    key=f"filter_text_{column}",
                 )
                 if user_text_input:
                     df = df[df[column].str.contains(user_text_input)]
