@@ -1,4 +1,4 @@
-import PIL
+#import PIL
 from pandas.api.types import (
     is_categorical_dtype,
     is_datetime64_any_dtype,
@@ -7,12 +7,12 @@ from pandas.api.types import (
 )
 import streamlit as st
 import numpy as np
-import plotly.express as px
+#import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import os
 import warnings
-import time
+#import time
 import plotly.colors as pc
 import sqlite3  # Added for DB support
 
@@ -177,7 +177,9 @@ def extract_nbands(outcar_path):
     raise ValueError("No non-empty lines found in the OUTCAR_transition file to extract NBANDS.")
 
 # Function to read defect formation energies from a file
+@st.cache_data(show_spinner=False)
 def read_formation_energies(file_path):
+
     data = {}
     with open(file_path, 'r') as f:
         lines = f.readlines()
