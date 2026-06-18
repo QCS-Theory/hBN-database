@@ -661,7 +661,7 @@ for tabs in tab_selection:
             excited_charge = charge_map[chargestate_defect]
             for charge in charge_bulk:
                 triplet_path = f"bulk/database/{str_defect}/{charge}/output_database.txt"
-                df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+                df = read_output_database(triplet_path)
                 #### Ground states
                 band_energy_spinUp_filled_triplet = []
                 band_energy_spinUp_unfilled_triplet = []
@@ -782,7 +782,7 @@ for tabs in tab_selection:
             else:
                 excited_path = generic
 
-            df_exc = pd.read_fwf(excited_path, sep="\s+", header=None, skip_blank_lines=True)  # ← unchanged
+            df_exc = read_output_database(excited_path)
             # initialize lists (unchanged)
             band_energy_spinUp_filled_excited_triplet   = []
             band_energy_spinUp_unfilled_excited_triplet = []
@@ -1512,7 +1512,7 @@ for tabs in tab_selection:
                 # Band structure
                 ########## Ground State ###
                 #df = pd.read_fwf(triplet_path, sep=" ",header=None)  
-                df = pd.read_fwf(triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+                df = read_output_database(triplet_path)
                 # Extract NBANDS automatically from the OUTCAR_transition file
 
                 band_energy_spinUp_filled_triplet = []
@@ -1575,7 +1575,7 @@ for tabs in tab_selection:
                                     
                 ###### Excited State ###
                 #df = pd.read_fwf(excited_triplet_path, sep=" ",header=None)  
-                df = pd.read_fwf(excited_triplet_path, sep="\s+", header=None, skip_blank_lines=True)
+                df = read_output_database(excited_triplet_path)
 
                 band_energy_spinUp_filled_excited_triplet = []
                 band_energy_spinUp_unfilled_excited_triplet = []
